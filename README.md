@@ -21,7 +21,7 @@ include 'HTMLServerComponents.php';
 
 * Call the process method
 ```
-echo HTMLServerComponents::processFile('my-components.php')
+echo HTMLServerComponents::processFile('my-component.php')
 ```
 
 ## License
