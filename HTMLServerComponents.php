@@ -187,6 +187,17 @@ class HTMLServerComponents
         return preg_replace('@^<' . $nodeName . '[^>]*>|</' . $nodeName . '>$@', '', $html);
     }
 
+    /**
+     * 
+     * @param int $errorNumber
+     * @param string $errorMessage
+     * @return boolean
+     */
+    static function handleInvalidTagWarning($errorNumber, $errorMessage)
+    {
+        return $errorNumber === 2 && strpos($errorMessage, 'invalid in Entity') !== false;
+    }
+
 }
 
 /**
@@ -226,17 +237,6 @@ class HTMLServerComponent
     function getAttribute($name, $defaultValue = null)
     {
         return isset($this->attributes[$name]) ? (string) $this->attributes[$name] : ($defaultValue === null ? null : (string) $defaultValue);
-    }
-
-    /**
-     * 
-     * @param int $errorNumber
-     * @param string $errorMessage
-     * @return boolean
-     */
-    static function handleInvalidTagWarning($errorNumber, $errorMessage)
-    {
-        return $errorNumber === 2 && strpos($errorMessage, 'invalid in Entity') !== false;
     }
 
 }
