@@ -36,6 +36,7 @@ class HTMLServerComponents
      */
     static function process($html)
     {
+        set_error_handler(["HTMLServerComponents", "handleInvalidTagWarning"]);
         $domDocument = self::getDOMDocument($html);
         $components = $domDocument->getElementsByTagName('component');
         $componentsCount = $components->length;
@@ -101,7 +102,8 @@ class HTMLServerComponents
 
         $domDocument2 = new DOMDocument;
         $domDocument2->formatOutput = true;
-        @$domDocument2->loadHTML($domDocument->saveHTML());
+        $domDocument2->loadHTML($domDocument->saveHTML());
+        restore_error_handler();
         return $domDocument2->saveHTML();
     }
 
@@ -163,7 +165,7 @@ class HTMLServerComponents
     static function getDOMDocument($html)
     {
         $domDocument = new DOMDocument;
-        @$domDocument->loadHTML($html);
+        $domDocument->loadHTML($html);
 
         $headElements = $domDocument->getElementsByTagName('head');
         if ($headElements->length === 0) {
@@ -224,6 +226,17 @@ class HTMLServerComponent
     function getAttribute($name, $defaultValue = null)
     {
         return isset($this->attributes[$name]) ? (string) $this->attributes[$name] : ($defaultValue === null ? null : (string) $defaultValue);
+    }
+
+    /**
+     * 
+     * @param int $errorNumber
+     * @param string $errorMessage
+     * @return boolean
+     */
+    static function handleInvalidTagWarning($errorNumber, $errorMessage)
+    {
+        return $errorNumber === 2 && strpos($errorMessage, 'invalid in Entity') !== false;
     }
 
 }
