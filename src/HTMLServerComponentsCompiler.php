@@ -14,6 +14,11 @@ class HTMLServerComponentsCompiler
 {
 
     /**
+     * 
+     */
+    const VERSION = '0.1.0';
+
+    /**
      *
      * @var array 
      */
