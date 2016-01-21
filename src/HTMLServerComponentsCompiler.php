@@ -41,7 +41,6 @@ class HTMLServerComponentsCompiler
      */
     public function process($html)
     {
-        set_error_handler([$this, "handleInvalidTagWarning"]);
         $domDocument = $this->getDOMDocument($html);
         $components = $domDocument->getElementsByTagName('component');
         $componentsCount = $components->length;
@@ -131,6 +130,7 @@ class HTMLServerComponentsCompiler
 
         $domDocument2 = new DOMDocument;
         $domDocument2->formatOutput = false;
+        set_error_handler([$this, "handleInvalidTagWarning"]);
         $domDocument2->loadHTML($domDocument->saveHTML());
         restore_error_handler();
         return $domDocument2->saveHTML();
@@ -234,7 +234,10 @@ class HTMLServerComponentsCompiler
             $html = '<!DOCTYPE html>' . $html;
         }
         $domDocument = new DOMDocument();
-        if ($domDocument->loadHTML('<?xml encoding="utf-8" ?>' . $html) === false) {
+        set_error_handler([$this, "handleInvalidTagWarning"]);
+        $result = $domDocument->loadHTML('<?xml encoding="utf-8" ?>' . $html);
+        restore_error_handler();
+        if ($result === false) {
             throw new Exception('');
         }
         $domDocument->removeChild($domDocument->childNodes->item(1)); // remove xml instruction
@@ -295,7 +298,8 @@ class HTMLServerComponentsCompiler
      */
     public function handleInvalidTagWarning($errorNumber, $errorMessage)
     {
-        return $errorNumber === 2 && strpos($errorMessage, 'invalid in Entity') !== false;
+        return true;
+        //return $errorNumber === 2 && strpos($errorMessage, 'invalid in Entity') !== false;
     }
 
 }

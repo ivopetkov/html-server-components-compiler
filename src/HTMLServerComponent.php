@@ -38,7 +38,7 @@ class HTMLServerComponent
     /**
      * 
      * @param string $name
-     * @param string $defaultValue
+     * @param string|null $defaultValue
      * @return string|null
      */
     public function getAttribute($name, $defaultValue = null)
