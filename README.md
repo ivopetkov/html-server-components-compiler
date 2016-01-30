@@ -12,16 +12,33 @@ The details article is available at [http://ivopetkov.com/b/html-server-componen
 
 You can find a demo at [http://ivopetkov.github.io/demos/html-server-components/](http://ivopetkov.github.io/demos/html-server-components/). The source is also [there](https://github.com/ivopetkov/ivopetkov.github.io/tree/master/demos/html-server-components/).
 
+## Download and install
+
+* Install via Composer
+```
+php composer.phar require ivopetkov/html-server-components-compiler
+```
+
+* Download the zip file
+
+Download the [latest release](https://github.com/ivopetkov/html-server-components-compiler/releases) from our GitHub page and include the following files.
+```
+include 'path/to/HTMLServerComponentsCompiler.php';
+include 'path/to/HTMLServerComponent.php';
+```
 ## Usage
 
-* Include the compiler file
+* Construct the compiler
 ```
-include 'HTMLServerComponents.php';
+$compiler = new HTMLServerComponentsCompiler();
 ```
 
 * Call the process method
 ```
-echo HTMLServerComponents::processFile('my-component.php')
+// over file
+echo $compiler->processFile('my-component.php')
+// over HTML Code
+echo $compiler->process('<component src="file:my-component.php"/>')
 ```
 
 ## License
