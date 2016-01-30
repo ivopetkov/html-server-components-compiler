@@ -32,7 +32,7 @@ class HTMLServerComponent
      */
     function __get($name)
     {
-        return $this->getAttribute(strtolower($name));
+        return $this->getAttribute($name);
     }
 
     /**
@@ -43,6 +43,7 @@ class HTMLServerComponent
      */
     public function getAttribute($name, $defaultValue = null)
     {
+        $name = strtolower($name);
         return isset($this->attributes[$name]) ? (string) $this->attributes[$name] : ($defaultValue === null ? null : (string) $defaultValue);
     }
 
