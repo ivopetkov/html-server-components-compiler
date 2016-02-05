@@ -16,7 +16,7 @@ class HTMLServerComponentsCompiler
     /**
      * 
      */
-    const VERSION = '0.1.1';
+    const VERSION = '0.2.0';
 
     /**
      *
@@ -130,7 +130,7 @@ class HTMLServerComponentsCompiler
 
         $domDocument2 = new DOMDocument;
         $domDocument2->formatOutput = false;
-        set_error_handler([$this, "handleInvalidTagWarning"]);
+        set_error_handler([$this, "handleInvalidHTMLErrors"]);
         $domDocument2->loadHTML($domDocument->saveHTML());
         restore_error_handler();
         return $domDocument2->saveHTML();
@@ -159,23 +159,8 @@ class HTMLServerComponentsCompiler
      */
     public function processFile($file, $attributes = [], $innerHTML = '')
     {
-        return $this->process($this->getComponentContent($file, $attributes, $innerHTML));
-    }
-
-    /**
-     * 
-     * @param string $file
-     * @param array $attributes
-     * @param string $innerHTML
-     * @return string
-     */
-    private function getComponentContent($file, $attributes = [], $innerHTML = '')
-    {
         $component = $this->constructComponent($attributes, $innerHTML);
-        ob_start();
-        $this->includeComponentFile($file, $component);
-        $content = ob_get_clean();
-        return $content;
+        return $this->process($this->getComponentFileContent($file, $component));
     }
 
     /**
@@ -196,10 +181,19 @@ class HTMLServerComponentsCompiler
      * 
      * @param string $file
      * @param HTMLServerComponent $component
+     * @throws \Exception
+     * @return string
      */
-    protected function includeComponentFile($file, $component)
+    protected function getComponentFileContent($file, $component)
     {
-        include $file;
+        if (is_file($file)) {
+            ob_start();
+            include $file;
+            $content = ob_get_clean();
+            return $content;
+        } else {
+            throw new \Exception('Component file cannot be found');
+        }
     }
 
     /**
@@ -234,7 +228,7 @@ class HTMLServerComponentsCompiler
             $html = '<!DOCTYPE html>' . $html;
         }
         $domDocument = new DOMDocument();
-        set_error_handler([$this, "handleInvalidTagWarning"]);
+        set_error_handler([$this, "handleInvalidHTMLErrors"]);
         $result = $domDocument->loadHTML('<?xml encoding="utf-8" ?>' . $html);
         restore_error_handler();
         if ($result === false) {
@@ -296,10 +290,9 @@ class HTMLServerComponentsCompiler
      * @param string $errorMessage
      * @return boolean
      */
-    public function handleInvalidTagWarning($errorNumber, $errorMessage)
+    public function handleInvalidHTMLErrors($errorNumber, $errorMessage)
     {
         return true;
-        //return $errorNumber === 2 && strpos($errorMessage, 'invalid in Entity') !== false;
     }
 
 }
