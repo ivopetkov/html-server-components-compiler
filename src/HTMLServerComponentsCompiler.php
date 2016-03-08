@@ -83,27 +83,27 @@ class HTMLServerComponentsCompiler
                     $componentBodyChildrenCount = $componentBodyElement->childNodes->length;
 
                     // keep scripts at the bottom
-                    $scriptElementsMovedIndexes = [];
-                    for ($j = $componentBodyChildrenCount - 1; $j >= 0; $j--) {
-                        $componentChild = $componentBodyElement->childNodes->item($j);
-                        if ($componentChild instanceof DOMText) {
-                            continue;
-                        }
-                        if ($componentChild instanceof DOMElement && $componentChild->tagName === 'script') {
-                            $componentChildAttributes = $this->getDOMElementAttributes($componentChild);
-                            if (!isset($componentChildAttributes['type']) || $componentChildAttributes['type'] === '' || $componentChildAttributes['type'] === 'text/javascript') {
-                                $domBodyElement->appendChild($domDocument->importNode($componentChild, true));
-                                $scriptElementsMovedIndexes[$j] = 1;
-                            }
-                        } else {
-                            break;
-                        }
-                    }
+//                    $scriptElementsMovedIndexes = [];
+//                    for ($j = $componentBodyChildrenCount - 1; $j >= 0; $j--) {
+//                        $componentChild = $componentBodyElement->childNodes->item($j);
+//                        if ($componentChild instanceof DOMText) {
+//                            continue;
+//                        }
+//                        if ($componentChild instanceof DOMElement && $componentChild->tagName === 'script') {
+//                            $componentChildAttributes = $this->getDOMElementAttributes($componentChild);
+//                            if (!isset($componentChildAttributes['type']) || $componentChildAttributes['type'] === '' || $componentChildAttributes['type'] === 'text/javascript') {
+//                                $domBodyElement->appendChild($domDocument->importNode($componentChild, true));
+//                                $scriptElementsMovedIndexes[$j] = 1;
+//                            }
+//                        } else {
+//                            break;
+//                        }
+//                    }
 
                     for ($j = 0; $j < $componentBodyChildrenCount; $j++) {
-                        if (!isset($scriptElementsMovedIndexes[$j])) {
-                            $component->parentNode->insertBefore($domDocument->importNode($componentBodyElement->childNodes->item($j), true), $component);
-                        }
+                        //if (!isset($scriptElementsMovedIndexes[$j])) {
+                        $component->parentNode->insertBefore($domDocument->importNode($componentBodyElement->childNodes->item($j), true), $component);
+                        //}
                     }
 
                     // add head elements
