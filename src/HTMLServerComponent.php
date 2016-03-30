@@ -1,7 +1,7 @@
 <?php
 
 /*
- * HTML Server Components Compiler
+ * HTML Server Components compiler
  * http://ivopetkov.com/b/html-server-components/
  * Copyright 2015-2016, Ivo Petkov
  * Free to use under the MIT license.
@@ -38,6 +38,39 @@ class HTMLServerComponent
     /**
      * 
      * @param string $name
+     * @param string $value
+     * @return void
+     */
+    function __set($name, $value)
+    {
+        $this->attributes[strtolower($name)] = $value;
+    }
+
+    /**
+     * 
+     * @param string $name
+     * @return boolean
+     */
+    function __isset($name)
+    {
+        return isset($this->attributes[strtolower($name)]);
+    }
+
+    /**
+     * 
+     * @param string $name
+     */
+    function __unset($name)
+    {
+        $name = strtolower($name);
+        if (isset($this->attributes[$name])) {
+            unset($this->attributes[$name]);
+        }
+    }
+
+    /**
+     * 
+     * @param string $name
      * @param string|null $defaultValue
      * @return string|null
      */
@@ -46,5 +79,7 @@ class HTMLServerComponent
         $name = strtolower($name);
         return isset($this->attributes[$name]) ? (string) $this->attributes[$name] : ($defaultValue === null ? null : (string) $defaultValue);
     }
+    
+    // doto set attbiute
 
 }

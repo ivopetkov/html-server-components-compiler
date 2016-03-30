@@ -1,4 +1,4 @@
-# HTML Server Components Compiler (in PHP)
+# HTML Server Components compiler (in PHP)
 
 **A brand new way to develop websites**
 
