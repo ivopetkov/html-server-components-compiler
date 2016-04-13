@@ -16,7 +16,7 @@ class HTMLServerComponentsCompiler
     /**
      * 
      */
-    const VERSION = '0.2.0';
+    const VERSION = '0.2.3';
 
     /**
      *
@@ -41,7 +41,7 @@ class HTMLServerComponentsCompiler
      */
     public function process($html)
     {
-        $domDocument = new HTML5DOMDocument();
+        $domDocument = new IvoPetkov\HTML5DOMDocument();
         $domDocument->loadHTML($html);
         $componentElements = $domDocument->getElementsByTagName('component');
         $componentElementsCount = $componentElements->length;
