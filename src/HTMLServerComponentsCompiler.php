@@ -63,7 +63,7 @@ class HTMLServerComponentsCompiler
                         if ($scheme === 'data') {
                             $componentHTML = $this->processData($sourceParts[1]);
                         } elseif ($scheme === 'file') {
-                            $componentHTML = $this->processFile($sourceParts[1], $attributes, $component->innerHTML);
+                            $componentHTML = $this->processFile(urldecode($sourceParts[1]), $attributes, $component->innerHTML);
                         } else {
                             throw new \Exception('URI scheme not valid!' . $domDocument->saveHTML($component));
                         }
