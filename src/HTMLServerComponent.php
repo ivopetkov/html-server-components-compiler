@@ -7,6 +7,8 @@
  * Free to use under the MIT license.
  */
 
+namespace IvoPetkov;
+
 /**
  * The class that is used to send data to the component
  */
@@ -28,6 +30,40 @@ class HTMLServerComponent
     /**
      * 
      * @param string $name
+     * @param string|null $defaultValue
+     * @return string|null
+     */
+    public function getAttribute($name, $defaultValue = null)
+    {
+        $name = strtolower($name);
+        return isset($this->attributes[$name]) ? (string) $this->attributes[$name] : $defaultValue;
+    }
+
+    /**
+     * 
+     * @param string $name
+     * @param string $value
+     */
+    public function setAttribute($name, $value)
+    {
+        $this->attributes[strtolower($name)] = $value;
+    }
+
+    /**
+     * 
+     * @param string $name
+     */
+    public function removeAttribute($name)
+    {
+        $name = strtolower($name);
+        if (isset($this->attributes[$name])) {
+            unset($this->attributes[$name]);
+        }
+    }
+
+    /**
+     * 
+     * @param string $name
      * @return string|null
      */
     function __get($name)
@@ -43,7 +79,7 @@ class HTMLServerComponent
      */
     function __set($name, $value)
     {
-        $this->attributes[strtolower($name)] = $value;
+        $this->setAttribute($name, $value);
     }
 
     /**
@@ -62,24 +98,7 @@ class HTMLServerComponent
      */
     function __unset($name)
     {
-        $name = strtolower($name);
-        if (isset($this->attributes[$name])) {
-            unset($this->attributes[$name]);
-        }
+        $this->removeAttribute($name);
     }
-
-    /**
-     * 
-     * @param string $name
-     * @param string|null $defaultValue
-     * @return string|null
-     */
-    public function getAttribute($name, $defaultValue = null)
-    {
-        $name = strtolower($name);
-        return isset($this->attributes[$name]) ? (string) $this->attributes[$name] : ($defaultValue === null ? null : (string) $defaultValue);
-    }
-    
-    // doto set attbiute
 
 }

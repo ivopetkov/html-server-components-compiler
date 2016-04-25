@@ -20,12 +20,12 @@ class Test extends HTMLServerComponentTestCase
     {
         $fullFilename = $this->createFile('component1.php', '<html><head><meta custom="value"></head><body>text1</body></html>');
 
-        $compiler = new HTMLServerComponentsCompiler();
+        $compiler = new \IvoPetkov\HTMLServerComponentsCompiler();
         $result = $compiler->process('<component src="file:' . $fullFilename . '"/>');
         $expectedResult = '<!DOCTYPE html>' . "\n" . '<html><head><meta custom="value"></head><body>text1</body></html>';
         $this->assertTrue($result === $expectedResult);
 
-        $compiler = new HTMLServerComponentsCompiler();
+        $compiler = new \IvoPetkov\HTMLServerComponentsCompiler();
         $result = $compiler->process('<html><body>'
                 . 'text0'
                 . '<component src="file:' . $fullFilename . '"/>'

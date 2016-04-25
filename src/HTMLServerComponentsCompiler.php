@@ -7,6 +7,8 @@
  * Free to use under the MIT license.
  */
 
+namespace IvoPetkov;
+
 /**
  * The class that processes components
  */
@@ -16,7 +18,7 @@ class HTMLServerComponentsCompiler
     /**
      * 
      */
-    const VERSION = '0.2.3';
+    const VERSION = '0.3.0';
 
     /**
      *
@@ -41,16 +43,14 @@ class HTMLServerComponentsCompiler
      */
     public function process($html)
     {
-        $domDocument = new IvoPetkov\HTML5DOMDocument();
+        $domDocument = new \IvoPetkov\HTML5DOMDocument();
         $domDocument->loadHTML($html);
         $componentElements = $domDocument->getElementsByTagName('component');
         $componentElementsCount = $componentElements->length;
         if ($componentElementsCount > 0) {
             for ($i = 0; $i < $componentElementsCount; $i++) {
                 $component = $componentElements->item(0);
-
                 $attributes = $component->getAttributes();
-
                 if (isset($attributes['src'])) {
                     $srcAttributeValue = $attributes['src'];
                     if (isset($this->aliases[$srcAttributeValue])) {
@@ -115,11 +115,11 @@ class HTMLServerComponentsCompiler
      * 
      * @param array $attributes
      * @param string $innerHTML
-     * @return \HTMLServerComponent
+     * @return \IvoPetkov\HTMLServerComponent
      */
     protected function constructComponent($attributes = [], $innerHTML = '')
     {
-        $component = new HTMLServerComponent();
+        $component = new \IvoPetkov\HTMLServerComponent();
         $component->attributes = $attributes;
         $component->innerHTML = $innerHTML;
         return $component;
@@ -128,7 +128,7 @@ class HTMLServerComponentsCompiler
     /**
      * 
      * @param string $file
-     * @param HTMLServerComponent $component
+     * @param \IvoPetkov\HTMLServerComponent $component
      * @throws \Exception
      * @return string
      */
