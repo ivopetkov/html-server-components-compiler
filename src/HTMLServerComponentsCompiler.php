@@ -73,9 +73,23 @@ class HTMLServerComponentsCompiler
                 } else {
                     throw new \Exception('Component src attribute missing! ' . $domDocument->saveHTML($component));
                 }
-                $insertTargetName = 'html-server-components-compiler-target-' . uniqid();
-                $component->parentNode->insertBefore($domDocument->createInsertTarget($insertTargetName), $component);
-                $domDocument->insertHTML($componentHTML, $insertTargetName);
+
+                $isInBodyTag = false;
+                $parentNode = $component->parentNode;
+                while ($parentNode !== null && isset($parentNode->tagName)) {
+                    if ($parentNode->tagName === 'body') {
+                        $isInBodyTag = true;
+                        break;
+                    }
+                    $parentNode = $parentNode->parentNode;
+                }
+                if ($isInBodyTag) {
+                    $insertTargetName = 'html-server-components-compiler-target-' . uniqid();
+                    $component->parentNode->insertBefore($domDocument->createInsertTarget($insertTargetName), $component);
+                    $domDocument->insertHTML($componentHTML, $insertTargetName);
+                } else {
+                    $domDocument->insertHTML($componentHTML);
+                }
 
                 $component->parentNode->removeChild($component);
             }
