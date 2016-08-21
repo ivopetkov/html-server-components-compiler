@@ -22,7 +22,7 @@ class Test extends HTMLServerComponentTestCase
 
         $compiler = new \IvoPetkov\HTMLServerComponentsCompiler();
         $result = $compiler->process('<component src="file:' . $fullFilename . '"/>');
-        $expectedResult = '<!DOCTYPE html>' . "\n" . '<html><head><meta custom="value"></head><body>text1</body></html>';
+        $expectedResult = '<!DOCTYPE html><html><head><meta custom="value"></head><body>text1</body></html>';
         $this->assertTrue($result === $expectedResult);
 
         $compiler = new \IvoPetkov\HTMLServerComponentsCompiler();
@@ -31,7 +31,7 @@ class Test extends HTMLServerComponentTestCase
                 . '<component src="file:' . $fullFilename . '"/>'
                 . 'text2'
                 . '</body></html>');
-        $expectedResult = '<!DOCTYPE html>' . "\n" . '<html><head><meta custom="value"></head><body>'
+        $expectedResult = '<!DOCTYPE html><html><head><meta custom="value"></head><body>'
                 . 'text0'
                 . 'text1'
                 . 'text2'
