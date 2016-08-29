@@ -39,4 +39,23 @@ class Test extends HTMLServerComponentTestCase
         $this->assertTrue($result === $expectedResult);
     }
 
+    /**
+     * 
+     */
+    public function testProccessRecursion()
+    {
+        $fullFilename1 = $this->createFile('component1.php', '<html><head><meta custom="value1"></head><body>text1</body></html>');
+        $fullFilename2 = $this->createFile('component1.php', '<html><head><meta custom="value2"></head><body><component src="file:' . urlencode($fullFilename1) . '"></component>text2</body></html>');
+        $fullFilename3 = $this->createFile('component1.php', '<html><head><meta custom="value3"></head><body><component src="file:' . urlencode($fullFilename2) . '"></component>text3</body></html>');
+
+        $compiler = new \IvoPetkov\HTMLServerComponentsCompiler();
+        $result = $compiler->process('<component src="file:' . $fullFilename3 . '"/>');
+        $expectedResult = '<!DOCTYPE html><html><head><meta custom="value3"><meta custom="value2"><meta custom="value1"></head><body>text1text2text3</body></html>';
+        $this->assertTrue($result === $expectedResult);
+
+        $result = $compiler->process('<component src="file:' . $fullFilename3 . '"/>', ['recursive' => false]);
+        $expectedResult = '<!DOCTYPE html><html><head><meta custom="value3"></head><body><component src="file:' . urlencode($fullFilename2) . '"></component>text3</body></html>';
+        $this->assertTrue($result === $expectedResult);
+    }
+
 }

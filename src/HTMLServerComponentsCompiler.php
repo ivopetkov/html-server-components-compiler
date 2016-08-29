@@ -39,10 +39,14 @@ class HTMLServerComponentsCompiler
     /**
      * Process (merge) components
      * @param string $html
+     * @param array $options
      * @return string
      */
-    public function process($html)
+    public function process($html, $options = [])
     {
+        if (isset($options['_internal_process_components']) && $options['_internal_process_components'] === false) {
+            return $html;
+        }
         $domDocument = new \IvoPetkov\HTML5DOMDocument();
         $domDocument->loadHTML($html);
         $componentElements = $domDocument->getElementsByTagName('component');
@@ -60,10 +64,14 @@ class HTMLServerComponentsCompiler
                     }
                     if (sizeof($sourceParts) === 2) {
                         $scheme = $sourceParts[0];
+                        if (isset($options['recursive']) && $options['recursive'] === false && ($scheme === 'data' || $scheme === 'file')) {
+                            $componentOptions = array_values($options);
+                            $componentOptions['_internal_process_components'] = false;
+                        }
                         if ($scheme === 'data') {
-                            $componentHTML = $this->processData($sourceParts[1]);
+                            $componentHTML = $this->processData($sourceParts[1], isset($componentOptions) ? $componentOptions : $options);
                         } elseif ($scheme === 'file') {
-                            $componentHTML = $this->processFile(urldecode($sourceParts[1]), $attributes, $component->innerHTML);
+                            $componentHTML = $this->processFile(urldecode($sourceParts[1]), $attributes, $component->innerHTML, isset($componentOptions) ? $componentOptions : $options);
                         } else {
                             throw new \Exception('URI scheme not valid!' . $domDocument->saveHTML($component));
                         }
@@ -101,15 +109,16 @@ class HTMLServerComponentsCompiler
     /**
      * 
      * @param string $data
+     * @param array $options
      * @return string
      */
-    public function processData($data)
+    public function processData($data, $options = [])
     {
         $html = $data;
         if (substr($data, 0, 7) === 'base64,') {
             $html = base64_decode(substr($data, 7));
         }
-        return $this->process($html);
+        return $this->process($html, $options);
     }
 
     /**
@@ -117,12 +126,13 @@ class HTMLServerComponentsCompiler
      * @param string $file
      * @param array $attributes
      * @param string $innerHTML
+     * @param array $options
      * @return string
      */
-    public function processFile($file, $attributes = [], $innerHTML = '')
+    public function processFile($file, $attributes = [], $innerHTML = '', $options = [])
     {
         $component = $this->constructComponent($attributes, $innerHTML);
-        return $this->process($this->getComponentFileContent($file, $component));
+        return $this->process($this->getComponentFileContent($file, $component), $options);
     }
 
     /**
