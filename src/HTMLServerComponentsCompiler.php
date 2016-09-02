@@ -71,7 +71,7 @@ class HTMLServerComponentsCompiler
                         if ($scheme === 'data') {
                             $componentHTML = $this->processData($sourceParts[1], isset($componentOptions) ? $componentOptions : $options);
                         } elseif ($scheme === 'file') {
-                            $componentHTML = $this->processFile(urldecode($sourceParts[1]), $attributes, $component->innerHTML, isset($componentOptions) ? $componentOptions : $options);
+                            $componentHTML = $this->processFile(urldecode($sourceParts[1]), $attributes, $component->innerHTML, [], isset($componentOptions) ? $componentOptions : $options);
                         } else {
                             throw new \Exception('URI scheme not valid!' . $domDocument->saveHTML($component));
                         }
@@ -126,13 +126,14 @@ class HTMLServerComponentsCompiler
      * @param string $file
      * @param array $attributes
      * @param string $innerHTML
+     * @param array $variables
      * @param array $options
      * @return string
      */
-    public function processFile($file, $attributes = [], $innerHTML = '', $options = [])
+    public function processFile($file, $attributes = [], $innerHTML = '', $variables = [], $options = [])
     {
         $component = $this->constructComponent($attributes, $innerHTML);
-        return $this->process($this->getComponentFileContent($file, $component), $options);
+        return $this->process($this->getComponentFileContent($file, array_merge($variables, ['component' => $component])), $options);
     }
 
     /**
@@ -152,19 +153,24 @@ class HTMLServerComponentsCompiler
     /**
      * 
      * @param string $file
-     * @param \IvoPetkov\HTMLServerComponent $component
+     * @param array $variables
      * @throws \Exception
      * @return string
      */
-    protected function getComponentFileContent($file, $component)
+    protected function getComponentFileContent($file, $variables)
     {
         if (is_file($file)) {
+            $__componentFile = $file;
+            unset($file);
+            if (!empty($variables)) {
+                extract($variables, EXTR_SKIP);
+            }
             ob_start();
-            include $file;
+            include $__componentFile;
             $content = ob_get_clean();
             return $content;
         } else {
-            throw new \Exception('Component file cannot be found');
+            throw new \Exception('Component file cannot be found (' . $file . ')');
         }
     }
 

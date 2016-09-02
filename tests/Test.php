@@ -42,6 +42,19 @@ class Test extends HTMLServerComponentTestCase
     /**
      * 
      */
+    public function testVariables()
+    {
+        $fullFilename = $this->createFile('component1.php', '<html><body><?= $component->test1?><?= $test2?></body></html>');
+
+        $compiler = new \IvoPetkov\HTMLServerComponentsCompiler();
+        $result = $compiler->processFile($fullFilename, ['test1' => '1'], '', ['test2' => 2]);
+        $expectedResult = '<!DOCTYPE html><html><body>12</body></html>';
+        $this->assertTrue($result === $expectedResult);
+    }
+
+    /**
+     * 
+     */
     public function testProccessRecursion()
     {
         $fullFilename1 = $this->createFile('component1.php', '<html><head><meta custom="value1"></head><body>text1</body></html>');
