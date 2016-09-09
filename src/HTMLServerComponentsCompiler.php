@@ -32,8 +32,8 @@ class HTMLServerComponentsCompiler
      * 
      * @param string $alias The alias
      * @param string $original The original source name
-     * @throws \InvalidArgumentException
      * @return void No value is returned
+     * @throws \InvalidArgumentException
      */
     function addAlias($alias, $original)
     {
@@ -56,6 +56,12 @@ class HTMLServerComponentsCompiler
      */
     public function process($content, $options = [])
     {
+        if (!is_string($content)) {
+            throw new \InvalidArgumentException('');
+        }
+        if (!is_array($options)) {
+            throw new \InvalidArgumentException('');
+        }
         if (isset($options['_internal_process_components']) && $options['_internal_process_components'] === false) {
             return $content;
         }
@@ -124,9 +130,16 @@ class HTMLServerComponentsCompiler
      * @param string $data The data to be used as component content. Currently only base64 encoded data is allowed.
      * @param array $options Compiler options
      * @return string The result HTML code
+     * @throws \InvalidArgumentException
      */
     public function processData($data, $options = [])
     {
+        if (!is_string($data)) {
+            throw new \InvalidArgumentException('');
+        }
+        if (!is_array($options)) {
+            throw new \InvalidArgumentException('');
+        }
         $content = $data;
         if (substr($data, 0, 7) === 'base64,') {
             $content = base64_decode(substr($data, 7));
@@ -143,9 +156,25 @@ class HTMLServerComponentsCompiler
      * @param array $variables List of variables that will be passes to the file. They will be available in the file scope.
      * @param array $options Compiler options
      * @return string The result HTML code
+     * @throws \InvalidArgumentException
      */
     public function processFile($file, $attributes = [], $innerHTML = '', $variables = [], $options = [])
     {
+        if (!is_string($file)) {
+            throw new \InvalidArgumentException('');
+        }
+        if (!is_array($attributes)) {
+            throw new \InvalidArgumentException('');
+        }
+        if (!is_string($innerHTML)) {
+            throw new \InvalidArgumentException('');
+        }
+        if (!is_array($variables)) {
+            throw new \InvalidArgumentException('');
+        }
+        if (!is_array($options)) {
+            throw new \InvalidArgumentException('');
+        }
         $component = $this->constructComponent($attributes, $innerHTML);
         return $this->process($this->getComponentFileContent($file, array_merge($variables, ['component' => $component])), $options);
     }
@@ -156,9 +185,16 @@ class HTMLServerComponentsCompiler
      * @param array $attributes The attributes of the component object
      * @param string $innerHTML The innerHTML of the component object
      * @return \IvoPetkov\HTMLServerComponent A component object
+     * @throws \InvalidArgumentException
      */
     protected function constructComponent($attributes = [], $innerHTML = '')
     {
+        if (!is_array($attributes)) {
+            throw new \InvalidArgumentException('');
+        }
+        if (!is_string($innerHTML)) {
+            throw new \InvalidArgumentException('');
+        }
         $component = new \IvoPetkov\HTMLServerComponent();
         $component->attributes = $attributes;
         $component->innerHTML = $innerHTML;
@@ -170,11 +206,18 @@ class HTMLServerComponentsCompiler
      * 
      * @param string $file The filename
      * @param array $variables List of variables that will be passes to the file. They will be available in the file scope.
-     * @throws \Exception
      * @return string The content of the file
+     * @throws \InvalidArgumentException
+     * @throws \Exception
      */
     protected function getComponentFileContent($file, $variables)
     {
+        if (!is_string($file)) {
+            throw new \InvalidArgumentException('');
+        }
+        if (!is_array($variables)) {
+            throw new \InvalidArgumentException('');
+        }
         if (is_file($file)) {
             $__componentFile = $file;
             unset($file);
