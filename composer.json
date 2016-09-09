@@ -1,6 +1,8 @@
 {
     "name": "ivopetkov/html-server-components-compiler",
     "description": "HTML Server Components compiler",
+    "keywords": ["HTML Server Components compiler", "HTML"],
+    "homepage": "https://github.com/ivopetkov/html-server-components-compiler",
     "license": "MIT",
     "authors": [
         {
