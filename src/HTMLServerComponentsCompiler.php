@@ -10,45 +10,57 @@
 namespace IvoPetkov;
 
 /**
- * The class that processes components
+ * HTML Server Components compiler. Converts components code into HTML code.
  */
 class HTMLServerComponentsCompiler
 {
 
     /**
-     * 
+     * Library version
      */
     const VERSION = '0.4.0';
 
     /**
-     *
+     * Stores the added aliases
+     * 
      * @var array 
      */
     private $aliases = [];
 
     /**
-     * Registers an alias
-     * @param string $alias
-     * @param string $original
+     * Adds an alias
+     * 
+     * @param string $alias The alias
+     * @param string $original The original source name
+     * @throws \InvalidArgumentException
+     * @return void No value is returned
      */
     function addAlias($alias, $original)
     {
+        if (!is_string($alias)) {
+            throw new \InvalidArgumentException('');
+        }
+        if (!is_string($original)) {
+            throw new \InvalidArgumentException('');
+        }
         $this->aliases[$alias] = $original;
     }
 
     /**
-     * Process (merge) components
-     * @param string $html
-     * @param array $options
-     * @return string
+     * Converts components code (if any) into HTML code
+     * 
+     * @param string $content The content to be processed
+     * @param array $options Compiler options
+     * @throws \InvalidArgumentException
+     * @return string The result HTML code
      */
-    public function process($html, $options = [])
+    public function process($content, $options = [])
     {
         if (isset($options['_internal_process_components']) && $options['_internal_process_components'] === false) {
-            return $html;
+            return $content;
         }
         $domDocument = new \IvoPetkov\HTML5DOMDocument();
-        $domDocument->loadHTML($html);
+        $domDocument->loadHTML($content);
         $componentElements = $domDocument->getElementsByTagName('component');
         $componentElementsCount = $componentElements->length;
         if ($componentElementsCount > 0) {
@@ -107,28 +119,30 @@ class HTMLServerComponentsCompiler
     }
 
     /**
+     * Creates a component from the data specified and processes the content
      * 
-     * @param string $data
-     * @param array $options
-     * @return string
+     * @param string $data The data to be used as component content. Currently only base64 encoded data is allowed.
+     * @param array $options Compiler options
+     * @return string The result HTML code
      */
     public function processData($data, $options = [])
     {
-        $html = $data;
+        $content = $data;
         if (substr($data, 0, 7) === 'base64,') {
-            $html = base64_decode(substr($data, 7));
+            $content = base64_decode(substr($data, 7));
         }
-        return $this->process($html, $options);
+        return $this->process($content, $options);
     }
 
     /**
+     * Creates a component from the file specified and processes the content
      * 
-     * @param string $file
-     * @param array $attributes
-     * @param string $innerHTML
-     * @param array $variables
-     * @param array $options
-     * @return string
+     * @param string $file The file to be run as component
+     * @param array $attributes Component object attributes
+     * @param string $innerHTML Component object innerHTML
+     * @param array $variables List of variables that will be passes to the file. They will be available in the file scope.
+     * @param array $options Compiler options
+     * @return string The result HTML code
      */
     public function processFile($file, $attributes = [], $innerHTML = '', $variables = [], $options = [])
     {
@@ -137,10 +151,11 @@ class HTMLServerComponentsCompiler
     }
 
     /**
+     * Constructs a component object
      * 
-     * @param array $attributes
-     * @param string $innerHTML
-     * @return \IvoPetkov\HTMLServerComponent
+     * @param array $attributes The attributes of the component object
+     * @param string $innerHTML The innerHTML of the component object
+     * @return \IvoPetkov\HTMLServerComponent A component object
      */
     protected function constructComponent($attributes = [], $innerHTML = '')
     {
@@ -151,11 +166,12 @@ class HTMLServerComponentsCompiler
     }
 
     /**
+     * Includes a component file and returns its content
      * 
-     * @param string $file
-     * @param array $variables
+     * @param string $file The filename
+     * @param array $variables List of variables that will be passes to the file. They will be available in the file scope.
      * @throws \Exception
-     * @return string
+     * @return string The content of the file
      */
     protected function getComponentFileContent($file, $variables)
     {

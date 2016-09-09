@@ -10,51 +10,76 @@
 namespace IvoPetkov;
 
 /**
- * The class that is used to send data to the component
+ * Used to create the $component object that is passed to the corresponding file
  */
 class HTMLServerComponent
 {
 
     /**
-     *
+     * Component tag attributes
+     * 
      * @var array 
      */
     public $attributes = [];
 
     /**
-     *
+     * Component tag innerHTML
+     * 
      * @var string 
      */
     public $innerHTML = '';
 
     /**
+     * Returns value of an attribute
      * 
-     * @param string $name
-     * @param string|null $defaultValue
-     * @return string|null
+     * @param string $name The name of the attribute
+     * @param string|null $defaultValue The default value of the attribute (if missing)
+     * @return string|null The value of the attribute or the defaultValue specified
+     * @throws \InvalidArgumentException
      */
     public function getAttribute($name, $defaultValue = null)
     {
+        if (!is_string($name)) {
+            throw new \InvalidArgumentException('');
+        }
+        if (!is_string($defaultValue) && $defaultValue !== null) {
+            throw new \InvalidArgumentException('');
+        }
         $name = strtolower($name);
         return isset($this->attributes[$name]) ? (string) $this->attributes[$name] : $defaultValue;
     }
 
     /**
+     * Sets new value to the attribute specified
      * 
-     * @param string $name
-     * @param string $value
+     * @param string $name The name of the attribute
+     * @param string $value The new value of the attribute
+     * @return void No value is returned
+     * @throws \InvalidArgumentException
      */
     public function setAttribute($name, $value)
     {
+        if (!is_string($name)) {
+            throw new \InvalidArgumentException('');
+        }
+        if (!is_string($value)) {
+            throw new \InvalidArgumentException('');
+        }
         $this->attributes[strtolower($name)] = $value;
     }
 
     /**
+     * Removes attribute
      * 
-     * @param string $name
+     * @param string $name The name of the attribute
+     * @return void No value is returned
+     * @throws \InvalidArgumentException
      */
     public function removeAttribute($name)
     {
+        if (!is_string($name)) {
+            throw new \InvalidArgumentException('');
+        }
         $name = strtolower($name);
         if (isset($this->attributes[$name])) {
             unset($this->attributes[$name]);
@@ -62,9 +87,10 @@ class HTMLServerComponent
     }
 
     /**
+     * Provides acccess to the component attributes via properties
      * 
-     * @param string $name
-     * @return string|null
+     * @param string $name The name of the attribute
+     * @return string|null The value of the attribute or null if missing
      */
     function __get($name)
     {
@@ -72,20 +98,26 @@ class HTMLServerComponent
     }
 
     /**
+     * Provides acccess to the component attributes via properties
      * 
-     * @param string $name
-     * @param string $value
-     * @return void
+     * @param string $name The name of the attribute
+     * @param string $value The new value of the attribute
+     * @return void No value is returned
+     * @throws \InvalidArgumentException
      */
     function __set($name, $value)
     {
+        if (!is_string($value)) {
+            throw new \InvalidArgumentException('');
+        }
         $this->setAttribute($name, $value);
     }
 
     /**
+     * Provides acccess to the component attributes via properties
      * 
-     * @param string $name
-     * @return boolean
+     * @param string $name The name of the attribute
+     * @return boolean TRUE if the attribute exists, FALSE otherwise
      */
     function __isset($name)
     {
@@ -93,8 +125,10 @@ class HTMLServerComponent
     }
 
     /**
+     * Provides acccess to the component attributes via properties
      * 
-     * @param string $name
+     * @param string $name The name of the attribute
+     * @return void No value is returned
      */
     function __unset($name)
     {
