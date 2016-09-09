@@ -42,6 +42,25 @@ class Test extends HTMLServerComponentTestCase
     /**
      * 
      */
+    public function testAlias()
+    {
+        $fullFilename = $this->createFile('component1.php', '<html><body>text1</body></html>');
+
+        $compiler = new \IvoPetkov\HTMLServerComponentsCompiler();
+        $compiler->addAlias('component1', 'file:' . $fullFilename);
+
+        $expectedResult = '<!DOCTYPE html><html><head></head><body>text1</body></html>';
+
+        $result = $compiler->process('<component src="file:' . $fullFilename . '" />');
+        $this->assertTrue($result === $expectedResult);
+
+        $result = $compiler->process('<component src="component1" />');
+        $this->assertTrue($result === $expectedResult);
+    }
+
+    /**
+     * 
+     */
     public function testVariables()
     {
         $fullFilename = $this->createFile('component1.php', '<html><body><?= $component->test1?><?= $test2?></body></html>');
@@ -69,6 +88,119 @@ class Test extends HTMLServerComponentTestCase
         $result = $compiler->process('<component src="file:' . $fullFilename3 . '"/>', ['recursive' => false]);
         $expectedResult = '<!DOCTYPE html><html><head><meta custom="value3"></head><body><component src="file:' . urlencode($fullFilename2) . '"></component>text3</body></html>';
         $this->assertTrue($result === $expectedResult);
+    }
+
+    /**
+     * 
+     */
+    public function testProccessData()
+    {
+
+        $compiler = new \IvoPetkov\HTMLServerComponentsCompiler();
+        $result = $compiler->process('<component src="data:base64,' . base64_encode('<html><body>text1</body></html>') . '" />');
+        $expectedResult = '<!DOCTYPE html><html><head></head><body>text1</body></html>';
+        $this->assertTrue($result === $expectedResult);
+    }
+
+    /**
+     * 
+     */
+    public function testComponentAttribute()
+    {
+        $fullFilename = $this->createFile('component1.php', '<html><body><?php '
+                . 'echo $component->test1;' // 1
+                . '$component->test1 = "2";'
+                . 'echo $component->test1;' // 2
+                . 'echo $component->test2;' // null
+                . 'echo (int)isset($component->test1);' // 1
+                . 'unset($component->test1);'
+                . 'echo (int)isset($component->test1);' // 0
+                . '?></body></html>');
+
+        $compiler = new \IvoPetkov\HTMLServerComponentsCompiler();
+        $result = $compiler->processFile($fullFilename, ['test1' => '1']);
+        $expectedResult = '<!DOCTYPE html><html><body>1210</body></html>';
+        $this->assertTrue($result === $expectedResult);
+    }
+
+    /**
+     * 
+     */
+    public function testInvalidArguments1()
+    {
+        $component = new \IvoPetkov\HTMLServerComponent();
+        $this->setExpectedException('InvalidArgumentException');
+        $component->getAttribute(1);
+    }
+
+    /**
+     * 
+     */
+    public function testInvalidArguments2()
+    {
+        $component = new \IvoPetkov\HTMLServerComponent();
+        $this->setExpectedException('InvalidArgumentException');
+        $component->getAttribute('test1', 1);
+    }
+
+    /**
+     * 
+     */
+    public function testInvalidArguments3()
+    {
+        $component = new \IvoPetkov\HTMLServerComponent();
+        $this->setExpectedException('InvalidArgumentException');
+        $component->setAttribute('test1', 1);
+    }
+
+    /**
+     * 
+     */
+    public function testInvalidArguments4()
+    {
+        $component = new \IvoPetkov\HTMLServerComponent();
+        $this->setExpectedException('InvalidArgumentException');
+        $component->setAttribute(1, 'value1');
+    }
+
+    /**
+     * 
+     */
+    public function testInvalidArguments5()
+    {
+        $component = new \IvoPetkov\HTMLServerComponent();
+        $this->setExpectedException('InvalidArgumentException');
+        $component->removeAttribute(1);
+    }
+
+    /**
+     * 
+     */
+    public function testInvalidArguments6()
+    {
+        $component = new \IvoPetkov\HTMLServerComponent();
+        $this->setExpectedException('InvalidArgumentException');
+        $component->test1 = 1;
+    }
+
+    /**
+     * 
+     */
+    public function testInvalidArguments7()
+    {
+        $compiler = new \IvoPetkov\HTMLServerComponentsCompiler();
+        $this->setExpectedException('InvalidArgumentException');
+        $compiler->addAlias('component1', 1);
+    }
+
+    /**
+     * 
+     */
+    public function testInvalidArguments8()
+    {
+        $compiler = new \IvoPetkov\HTMLServerComponentsCompiler();
+        $this->setExpectedException('InvalidArgumentException');
+        $compiler->addAlias(1, 'file:component1.php');
     }
 
 }
