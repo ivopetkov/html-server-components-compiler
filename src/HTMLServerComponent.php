@@ -92,7 +92,7 @@ class HTMLServerComponent
      * @param string $name The name of the attribute
      * @return string|null The value of the attribute or null if missing
      */
-    function __get($name)
+    public function __get($name)
     {
         return $this->getAttribute($name);
     }
@@ -105,7 +105,7 @@ class HTMLServerComponent
      * @return void No value is returned
      * @throws \InvalidArgumentException
      */
-    function __set($name, $value)
+    public function __set($name, $value)
     {
         if (!is_string($value)) {
             throw new \InvalidArgumentException('');
@@ -119,7 +119,7 @@ class HTMLServerComponent
      * @param string $name The name of the attribute
      * @return boolean TRUE if the attribute exists, FALSE otherwise
      */
-    function __isset($name)
+    public function __isset($name)
     {
         return isset($this->attributes[strtolower($name)]);
     }
@@ -130,7 +130,7 @@ class HTMLServerComponent
      * @param string $name The name of the attribute
      * @return void No value is returned
      */
-    function __unset($name)
+    public function __unset($name)
     {
         $this->removeAttribute($name);
     }

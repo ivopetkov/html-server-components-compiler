@@ -35,7 +35,7 @@ class HTMLServerComponentsCompiler
      * @return void No value is returned
      * @throws \InvalidArgumentException
      */
-    function addAlias($alias, $original)
+    public function addAlias($alias, $original)
     {
         if (!is_string($alias)) {
             throw new \InvalidArgumentException('');
