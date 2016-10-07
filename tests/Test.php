@@ -49,7 +49,7 @@ class Test extends HTMLServerComponentTestCase
         $compiler = new \IvoPetkov\HTMLServerComponentsCompiler();
         $compiler->addAlias('component1', 'file:' . $fullFilename);
 
-        $expectedResult = '<!DOCTYPE html><html><head></head><body>text1</body></html>';
+        $expectedResult = '<!DOCTYPE html><html><body>text1</body></html>';
 
         $result = $compiler->process('<component src="file:' . $fullFilename . '" />');
         $this->assertTrue($result === $expectedResult);
@@ -77,8 +77,8 @@ class Test extends HTMLServerComponentTestCase
     public function testProccessRecursion()
     {
         $fullFilename1 = $this->createFile('component1.php', '<html><head><meta custom="value1"></head><body>text1</body></html>');
-        $fullFilename2 = $this->createFile('component1.php', '<html><head><meta custom="value2"></head><body><component src="file:' . urlencode($fullFilename1) . '"></component>text2</body></html>');
-        $fullFilename3 = $this->createFile('component1.php', '<html><head><meta custom="value3"></head><body><component src="file:' . urlencode($fullFilename2) . '"></component>text3</body></html>');
+        $fullFilename2 = $this->createFile('component2.php', '<html><head><meta custom="value2"></head><body><component src="file:' . urlencode($fullFilename1) . '"></component>text2</body></html>');
+        $fullFilename3 = $this->createFile('component3.php', '<html><head><meta custom="value3"></head><body><component src="file:' . urlencode($fullFilename2) . '"></component>text3</body></html>');
 
         $compiler = new \IvoPetkov\HTMLServerComponentsCompiler();
         $result = $compiler->process('<component src="file:' . $fullFilename3 . '"/>');
@@ -98,7 +98,7 @@ class Test extends HTMLServerComponentTestCase
 
         $compiler = new \IvoPetkov\HTMLServerComponentsCompiler();
         $result = $compiler->process('<component src="data:base64,' . base64_encode('<html><body>text1</body></html>') . '" />');
-        $expectedResult = '<!DOCTYPE html><html><head></head><body>text1</body></html>';
+        $expectedResult = '<!DOCTYPE html><html><body>text1</body></html>';
         $this->assertTrue($result === $expectedResult);
     }
 
