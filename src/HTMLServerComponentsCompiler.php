@@ -18,7 +18,7 @@ class HTMLServerComponentsCompiler
     /**
      * Library version
      */
-    const VERSION = '0.4.0';
+    const VERSION = '0.4.3';
 
     /**
      * Stores the added aliases
