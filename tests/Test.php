@@ -61,12 +61,33 @@ class Test extends HTMLServerComponentTestCase
     /**
      * 
      */
+    public function testCreateComponent()
+    {
+        $fullFilename = $this->createFile('component1.php', '<html><body>text1</body></html>');
+
+        $compiler = new \IvoPetkov\HTMLServerComponentsCompiler();
+        $component = $compiler->constructComponent(['var1' => '1'], 'hi');
+
+        $expectedResult = '<component var1="1">hi</component>';
+        $this->assertTrue((string) $component === $expectedResult);
+    }
+
+    /**
+     * 
+     */
     public function testVariables()
     {
         $fullFilename = $this->createFile('component1.php', '<html><body><?= $component->test1?><?= $test2?></body></html>');
 
         $compiler = new \IvoPetkov\HTMLServerComponentsCompiler();
-        $result = $compiler->processFile($fullFilename, ['test1' => '1'], '', ['test2' => 2]);
+        $component = new \IvoPetkov\HTMLServerComponent();
+        $component->src = 'file:' . $fullFilename;
+        $component->test1 = '1';
+        $result = $compiler->process($component, [
+            'variables' => [
+                'test2' => 2
+            ]
+        ]);
         $expectedResult = '<!DOCTYPE html><html><body>12</body></html>';
         $this->assertTrue($result === $expectedResult);
     }
@@ -118,7 +139,10 @@ class Test extends HTMLServerComponentTestCase
                 . '?></body></html>');
 
         $compiler = new \IvoPetkov\HTMLServerComponentsCompiler();
-        $result = $compiler->processFile($fullFilename, ['test1' => '1']);
+        $component = new \IvoPetkov\HTMLServerComponent();
+        $component->src = 'file:' . $fullFilename;
+        $component->test1 = '1';
+        $result = $compiler->process($component);
         $expectedResult = '<!DOCTYPE html><html><body>1210</body></html>';
         $this->assertTrue($result === $expectedResult);
     }

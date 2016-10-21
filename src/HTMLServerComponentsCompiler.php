@@ -18,7 +18,7 @@ class HTMLServerComponentsCompiler
     /**
      * Library version
      */
-    const VERSION = '0.4.3';
+    const VERSION = '0.5.0';
 
     /**
      * Stores the added aliases
@@ -49,134 +49,108 @@ class HTMLServerComponentsCompiler
     /**
      * Converts components code (if any) into HTML code
      * 
-     * @param string $content The content to be processed
+     * @param string|\IvoPetkov\HTMLServerComponent $content The content to be processed
      * @param array $options Compiler options
      * @throws \InvalidArgumentException
      * @return string The result HTML code
      */
     public function process($content, $options = [])
     {
-        if (!is_string($content)) {
+        if (!is_string($content) && !($content instanceof \IvoPetkov\HTMLServerComponent)) {
             throw new \InvalidArgumentException('');
         }
         if (!is_array($options)) {
             throw new \InvalidArgumentException('');
+        }
+        if (is_string($content) && strpos($content, '<component') === false) {
+            return $content;
         }
         if (isset($options['_internal_process_components']) && $options['_internal_process_components'] === false) {
             return $content;
         }
+
+        $getComponentFileContent = function($file, $component, $variables) {
+            if (is_file($file)) {
+                $__componentFile = $file;
+                unset($file);
+                if (!empty($variables)) {
+                    extract($variables, EXTR_SKIP);
+                }
+                unset($variables);
+                ob_start();
+                include $__componentFile;
+                $content = ob_get_clean();
+                return $content;
+            } else {
+                throw new \Exception('Component file cannot be found (' . $file . ')');
+            }
+        };
+
+        $getComponentResultHTML = function($component) use (&$getComponentFileContent, $options) {
+            if (isset($component->attributes['src'])) {
+                // todo check alias of alias
+                $srcAttributeValue = $component->attributes['src'];
+                if (isset($this->aliases[$srcAttributeValue])) {
+                    $sourceParts = explode(':', $this->aliases[$srcAttributeValue], 2);
+                } else {
+                    $sourceParts = explode(':', $srcAttributeValue, 2);
+                }
+                if (sizeof($sourceParts) === 2) {
+                    $scheme = $sourceParts[0];
+                    if (isset($options['recursive']) && $options['recursive'] === false) {
+                        $componentOptions = array_merge($options, ['_internal_process_components' => false]);
+                    }
+                    if ($scheme === 'data') {
+                        if (substr($sourceParts[1], 0, 7) === 'base64,') {
+                            return $this->process(base64_decode(substr($sourceParts[1], 7)), isset($componentOptions) ? $componentOptions : $options);
+                        }
+                        throw new \Exception('Data URI scheme only supports base64!' . (string) $component);
+                    } elseif ($scheme === 'file') {
+                        return $this->process($getComponentFileContent(urldecode($sourceParts[1]), $component, isset($options['variables']) && is_array($options['variables']) ? $options['variables'] : []), isset($componentOptions) ? $componentOptions : $options);
+                    }
+                    throw new \Exception('URI scheme not valid!' . (string) $component);
+                }
+                throw new \Exception('URI scheme not found!' . (string) $component);
+            }
+            throw new \Exception('Component src attribute missing! ' . (string) $component);
+        };
+
         $domDocument = new \IvoPetkov\HTML5DOMDocument();
-        $domDocument->loadHTML($content);
-        $componentElements = $domDocument->getElementsByTagName('component');
-        $componentElementsCount = $componentElements->length;
-        if ($componentElementsCount > 0) {
-            for ($i = 0; $i < $componentElementsCount; $i++) {
-                $component = $componentElements->item(0);
-                $attributes = $component->getAttributes();
-                if (isset($attributes['src'])) {
-                    $srcAttributeValue = $attributes['src'];
-                    if (isset($this->aliases[$srcAttributeValue])) {
-                        $sourceParts = explode(':', $this->aliases[$srcAttributeValue], 2);
-                    } else {
-                        $sourceParts = explode(':', $srcAttributeValue, 2);
-                    }
-                    if (sizeof($sourceParts) === 2) {
-                        $scheme = $sourceParts[0];
-                        if (isset($options['recursive']) && $options['recursive'] === false && ($scheme === 'data' || $scheme === 'file')) {
-                            $componentOptions = array_values($options);
-                            $componentOptions['_internal_process_components'] = false;
-                        }
-                        if ($scheme === 'data') {
-                            $componentHTML = $this->processData($sourceParts[1], isset($componentOptions) ? $componentOptions : $options);
-                        } elseif ($scheme === 'file') {
-                            $componentHTML = $this->processFile(urldecode($sourceParts[1]), $attributes, $component->innerHTML, [], isset($componentOptions) ? $componentOptions : $options);
-                        } else {
-                            throw new \Exception('URI scheme not valid!' . $domDocument->saveHTML($component));
-                        }
-                    } else {
-                        throw new \Exception('URI scheme not found!' . $domDocument->saveHTML($component));
-                    }
-                } else {
-                    throw new \Exception('Component src attribute missing! ' . $domDocument->saveHTML($component));
-                }
+        if ($content instanceof \IvoPetkov\HTMLServerComponent) {
+            $domDocument->loadHTML($getComponentResultHTML($content));
+        } else {
+            $domDocument->loadHTML($content);
+            $componentElements = $domDocument->getElementsByTagName('component');
+            $componentElementsCount = $componentElements->length;
+            if ($componentElementsCount > 0) {
+                for ($i = 0; $i < $componentElementsCount; $i++) {
+                    $componentElement = $componentElements->item(0);
+                    $component = $this->constructComponent($componentElement->getAttributes(), $componentElement->innerHTML);
+                    $componentResultHTML = $getComponentResultHTML($component);
 
-                $isInBodyTag = false;
-                $parentNode = $component->parentNode;
-                while ($parentNode !== null && isset($parentNode->tagName)) {
-                    if ($parentNode->tagName === 'body') {
-                        $isInBodyTag = true;
-                        break;
+                    $isInBodyTag = false;
+                    $parentNode = $componentElement->parentNode;
+                    while ($parentNode !== null && isset($parentNode->tagName)) {
+                        if ($parentNode->tagName === 'body') {
+                            $isInBodyTag = true;
+                            break;
+                        }
+                        $parentNode = $parentNode->parentNode;
                     }
-                    $parentNode = $parentNode->parentNode;
-                }
-                if ($isInBodyTag) {
-                    $insertTargetName = 'html-server-components-compiler-target-' . uniqid();
-                    $component->parentNode->insertBefore($domDocument->createInsertTarget($insertTargetName), $component);
-                    $domDocument->insertHTML($componentHTML, $insertTargetName);
-                } else {
-                    $domDocument->insertHTML($componentHTML);
-                }
+                    if ($isInBodyTag) {
+                        $insertTargetName = 'html-server-components-compiler-target-' . uniqid();
+                        $componentElement->parentNode->insertBefore($domDocument->createInsertTarget($insertTargetName), $componentElement);
+                        $domDocument->insertHTML($componentResultHTML, $insertTargetName);
+                    } else {
+                        $domDocument->insertHTML($componentResultHTML);
+                    }
 
-                $component->parentNode->removeChild($component);
+                    $componentElement->parentNode->removeChild($componentElement);
+                }
             }
         }
 
         return $domDocument->saveHTML();
-    }
-
-    /**
-     * Creates a component from the data specified and processes the content
-     * 
-     * @param string $data The data to be used as component content. Currently only base64 encoded data is allowed.
-     * @param array $options Compiler options
-     * @return string The result HTML code
-     * @throws \InvalidArgumentException
-     */
-    public function processData($data, $options = [])
-    {
-        if (!is_string($data)) {
-            throw new \InvalidArgumentException('');
-        }
-        if (!is_array($options)) {
-            throw new \InvalidArgumentException('');
-        }
-        $content = $data;
-        if (substr($data, 0, 7) === 'base64,') {
-            $content = base64_decode(substr($data, 7));
-        }
-        return $this->process($content, $options);
-    }
-
-    /**
-     * Creates a component from the file specified and processes the content
-     * 
-     * @param string $file The file to be run as component
-     * @param array $attributes Component object attributes
-     * @param string $innerHTML Component object innerHTML
-     * @param array $variables List of variables that will be passes to the file. They will be available in the file scope.
-     * @param array $options Compiler options
-     * @return string The result HTML code
-     * @throws \InvalidArgumentException
-     */
-    public function processFile($file, $attributes = [], $innerHTML = '', $variables = [], $options = [])
-    {
-        if (!is_string($file)) {
-            throw new \InvalidArgumentException('');
-        }
-        if (!is_array($attributes)) {
-            throw new \InvalidArgumentException('');
-        }
-        if (!is_string($innerHTML)) {
-            throw new \InvalidArgumentException('');
-        }
-        if (!is_array($variables)) {
-            throw new \InvalidArgumentException('');
-        }
-        if (!is_array($options)) {
-            throw new \InvalidArgumentException('');
-        }
-        $component = $this->constructComponent($attributes, $innerHTML);
-        return $this->process($this->getComponentFileContent($file, array_merge($variables, ['component' => $component])), $options);
     }
 
     /**
@@ -187,7 +161,7 @@ class HTMLServerComponentsCompiler
      * @return \IvoPetkov\HTMLServerComponent A component object
      * @throws \InvalidArgumentException
      */
-    protected function constructComponent($attributes = [], $innerHTML = '')
+    public function constructComponent($attributes = [], $innerHTML = '')
     {
         if (!is_array($attributes)) {
             throw new \InvalidArgumentException('');
@@ -199,38 +173,6 @@ class HTMLServerComponentsCompiler
         $component->attributes = $attributes;
         $component->innerHTML = $innerHTML;
         return $component;
-    }
-
-    /**
-     * Includes a component file and returns its content
-     * 
-     * @param string $file The filename
-     * @param array $variables List of variables that will be passes to the file. They will be available in the file scope.
-     * @return string The content of the file
-     * @throws \InvalidArgumentException
-     * @throws \Exception
-     */
-    protected function getComponentFileContent($file, $variables)
-    {
-        if (!is_string($file)) {
-            throw new \InvalidArgumentException('');
-        }
-        if (!is_array($variables)) {
-            throw new \InvalidArgumentException('');
-        }
-        if (is_file($file)) {
-            $__componentFile = $file;
-            unset($file);
-            if (!empty($variables)) {
-                extract($variables, EXTR_SKIP);
-            }
-            ob_start();
-            include $__componentFile;
-            $content = ob_get_clean();
-            return $content;
-        } else {
-            throw new \Exception('Component file cannot be found (' . $file . ')');
-        }
     }
 
 }

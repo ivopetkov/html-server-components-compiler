@@ -135,4 +135,19 @@ class HTMLServerComponent
         $this->removeAttribute($name);
     }
 
+    /**
+     * Returns a HTML representation of the component
+     */
+    public function __toString()
+    {
+        $html = '<component';
+        foreach ($this->attributes as $name => $value) {
+            $html .= ' ' . $name . '="' . htmlspecialchars($value) . '"';
+        }
+        $html .= '>';
+        $html .= $this->innerHTML;
+        $html .= '</component>';
+        return $html;
+    }
+
 }
