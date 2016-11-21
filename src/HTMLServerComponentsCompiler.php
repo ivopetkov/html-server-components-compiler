@@ -104,15 +104,15 @@ class HTMLServerComponentsCompiler
                         if (substr($sourceParts[1], 0, 7) === 'base64,') {
                             return $this->process(base64_decode(substr($sourceParts[1], 7)), isset($componentOptions) ? $componentOptions : $options);
                         }
-                        throw new \Exception('Data URI scheme only supports base64!' . (string) $component);
+                        throw new \Exception('Components data URI scheme only supports base64 (data:base64,ABCD...)!');
                     } elseif ($scheme === 'file') {
                         return $this->process($getComponentFileContent(urldecode($sourceParts[1]), $component, isset($options['variables']) && is_array($options['variables']) ? $options['variables'] : []), isset($componentOptions) ? $componentOptions : $options);
                     }
-                    throw new \Exception('URI scheme not valid!' . (string) $component);
+                    throw new \Exception('Components URI scheme not valid! It must be \'file:\', \'data:\' or an alias.');
                 }
-                throw new \Exception('URI scheme not found!' . (string) $component);
+                throw new \Exception('Components URI scheme or alias not found at ' . (string) $component . '!');
             }
-            throw new \Exception('Component src attribute missing! ' . (string) $component);
+            throw new \Exception('Component src attribute is missing at ' . (string) $component . '!');
         };
 
         $domDocument = new \IvoPetkov\HTML5DOMDocument();
