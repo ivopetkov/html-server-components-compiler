@@ -69,7 +69,7 @@ class HTMLServerComponentsCompiler
             return $content;
         }
 
-        $getComponentFileContent = function($file, $component, $variables) {
+        $getComponentFileContent = static function($file, $component, $variables) {
             if (is_file($file)) {
                 $__componentFile = $file;
                 unset($file);
