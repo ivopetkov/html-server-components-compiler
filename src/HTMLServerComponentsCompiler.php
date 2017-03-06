@@ -125,6 +125,9 @@ class HTMLServerComponentsCompiler
             if ($componentElementsCount > 0) {
                 for ($i = 0; $i < $componentElementsCount; $i++) {
                     $componentElement = $componentElements->item(0);
+                    if ($componentElement === null) { // component in component innerHTML case
+                        break;
+                    }
                     $component = $this->constructComponent($componentElement->getAttributes(), $componentElement->innerHTML);
                     $componentResultHTML = $getComponentResultHTML($component);
 

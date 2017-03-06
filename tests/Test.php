@@ -126,6 +126,22 @@ class Test extends HTMLServerComponentTestCase
     /**
      * 
      */
+    public function testComponentInComponentInnerHTML()
+    {
+
+        $_GET['ivo'] = 1;
+        $fullFilename1 = $this->createFile('component1.php', '<html><body>text1</body></html>');
+        $fullFilename2 = $this->createFile('component2.php', '<html><head><title>hi</title><body><?= $component->innerHTML;?></body>/head></html>');
+
+        $compiler = new \IvoPetkov\HTMLServerComponentsCompiler();
+        $result = $compiler->process('<component src="file:' . $fullFilename2 . '"><component src="file:' . $fullFilename1 . '"/></component>');
+        $expectedResult = '<!DOCTYPE html><html><head><title>hi</title></head><body>text1</body></html>';
+        $this->assertTrue($result === $expectedResult);
+    }
+
+    /**
+     * 
+     */
     public function testComponentAttribute()
     {
         $fullFilename = $this->createFile('component1.php', '<html><body><?php '
