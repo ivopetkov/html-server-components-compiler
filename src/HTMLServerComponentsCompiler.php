@@ -143,12 +143,12 @@ class HTMLServerComponentsCompiler
                     if ($isInBodyTag) {
                         $insertTargetName = 'html-server-components-compiler-target-' . uniqid();
                         $componentElement->parentNode->insertBefore($domDocument->createInsertTarget($insertTargetName), $componentElement);
+                        $componentElement->parentNode->removeChild($componentElement); // must be before insertHTML because a duplicate elements IDs can occur.
                         $domDocument->insertHTML($componentResultHTML, $insertTargetName);
                     } else {
+                        $componentElement->parentNode->removeChild($componentElement);
                         $domDocument->insertHTML($componentResultHTML);
                     }
-
-                    $componentElement->parentNode->removeChild($componentElement);
                 }
             }
         }
