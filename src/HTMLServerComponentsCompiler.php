@@ -65,9 +65,6 @@ class HTMLServerComponentsCompiler
         if (is_string($content) && strpos($content, '<component') === false) {
             return $content;
         }
-        if (isset($options['_internal_process_components']) && $options['_internal_process_components'] === false) {
-            return $content;
-        }
 
         $getComponentFileContent = static function($file, $component, $variables) {
             if (is_file($file)) {
@@ -95,18 +92,15 @@ class HTMLServerComponentsCompiler
                 } else {
                     $sourceParts = explode(':', $srcAttributeValue, 2);
                 }
-                if (sizeof($sourceParts) === 2) {
+                if (isset($sourceParts[0], $sourceParts[1])) {
                     $scheme = $sourceParts[0];
-                    if (isset($options['recursive']) && $options['recursive'] === false) {
-                        $componentOptions = array_merge($options, ['_internal_process_components' => false]);
-                    }
                     if ($scheme === 'data') {
                         if (substr($sourceParts[1], 0, 7) === 'base64,') {
-                            return $this->process(base64_decode(substr($sourceParts[1], 7)), isset($componentOptions) ? $componentOptions : $options);
+                            return base64_decode(substr($sourceParts[1], 7)); //$this->process(, isset($componentOptions) ? $componentOptions : $options);
                         }
                         throw new \Exception('Components data URI scheme only supports base64 (data:base64,ABCD...)!');
                     } elseif ($scheme === 'file') {
-                        return $this->process($getComponentFileContent(urldecode($sourceParts[1]), $component, isset($options['variables']) && is_array($options['variables']) ? $options['variables'] : []), isset($componentOptions) ? $componentOptions : $options);
+                        return $getComponentFileContent(urldecode($sourceParts[1]), $component, isset($options['variables']) && is_array($options['variables']) ? $options['variables'] : []); //$this->process(isset($componentOptions) ? $componentOptions : $options);
                     }
                     throw new \Exception('Components URI scheme not valid! It must be \'file:\', \'data:\' or an alias.');
                 }
@@ -116,40 +110,41 @@ class HTMLServerComponentsCompiler
         };
 
         $domDocument = new \IvoPetkov\HTML5DOMDocument();
-        if ($content instanceof \IvoPetkov\HTMLServerComponent) {
-            $domDocument->loadHTML($getComponentResultHTML($content));
-        } else {
-            $domDocument->loadHTML($content);
+        $domDocument->loadHTML($content instanceof \IvoPetkov\HTMLServerComponent ? $getComponentResultHTML($content) : $content);
+        for ($level = 0; $level < 1000; $level++) {
             $componentElements = $domDocument->getElementsByTagName('component');
             $componentElementsCount = $componentElements->length;
-            if ($componentElementsCount > 0) {
-                for ($i = 0; $i < $componentElementsCount; $i++) {
-                    $componentElement = $componentElements->item(0);
-                    if ($componentElement === null) { // component in component innerHTML case
+            if ($componentElementsCount === 0) {
+                break;
+            }
+            for ($i = 0; $i < $componentElementsCount; $i++) {
+                $componentElement = $componentElements->item($i);
+                if ($componentElement === null) { // component in component innerHTML case
+                    continue;
+                }
+                $component = $this->constructComponent($componentElement->getAttributes(), $componentElement->innerHTML);
+                $componentResultHTML = $getComponentResultHTML($component);
+                $isInBodyTag = false;
+                $parentNode = $componentElement->parentNode;
+                while ($parentNode !== null && isset($parentNode->tagName)) {
+                    if ($parentNode->tagName === 'body') {
+                        $isInBodyTag = true;
                         break;
                     }
-                    $component = $this->constructComponent($componentElement->getAttributes(), $componentElement->innerHTML);
-                    $componentResultHTML = $getComponentResultHTML($component);
-
-                    $isInBodyTag = false;
-                    $parentNode = $componentElement->parentNode;
-                    while ($parentNode !== null && isset($parentNode->tagName)) {
-                        if ($parentNode->tagName === 'body') {
-                            $isInBodyTag = true;
-                            break;
-                        }
-                        $parentNode = $parentNode->parentNode;
-                    }
-                    if ($isInBodyTag) {
-                        $insertTargetName = 'html-server-components-compiler-target-' . uniqid();
-                        $componentElement->parentNode->insertBefore($domDocument->createInsertTarget($insertTargetName), $componentElement);
-                        $componentElement->parentNode->removeChild($componentElement); // must be before insertHTML because a duplicate elements IDs can occur.
-                        $domDocument->insertHTML($componentResultHTML, $insertTargetName);
-                    } else {
-                        $componentElement->parentNode->removeChild($componentElement);
-                        $domDocument->insertHTML($componentResultHTML);
-                    }
+                    $parentNode = $parentNode->parentNode;
                 }
+                if ($isInBodyTag) {
+                    $insertTargetName = 'html-server-components-compiler-insert-target';
+                    $componentElement->parentNode->insertBefore($domDocument->createInsertTarget($insertTargetName), $componentElement);
+                    $componentElement->parentNode->removeChild($componentElement); // must be before insertHTML because a duplicate elements IDs can occur.
+                    $domDocument->insertHTML($componentResultHTML, $insertTargetName);
+                } else {
+                    $componentElement->parentNode->removeChild($componentElement);
+                    $domDocument->insertHTML($componentResultHTML);
+                }
+            }
+            if (isset($options['recursive']) && $options['recursive'] === false) {
+                break;
             }
         }
 
