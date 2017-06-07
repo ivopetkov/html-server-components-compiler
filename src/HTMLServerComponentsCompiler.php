@@ -109,41 +109,52 @@ class HTMLServerComponentsCompiler
             throw new \Exception('Component src attribute is missing at ' . (string) $component . '!');
         };
 
+        $disableLevelProcessing = false;
         $domDocument = new \IvoPetkov\HTML5DOMDocument();
-        $domDocument->loadHTML($content instanceof \IvoPetkov\HTMLServerComponent ? $getComponentResultHTML($content) : $content);
-        for ($level = 0; $level < 1000; $level++) {
-            $componentElements = $domDocument->getElementsByTagName('component');
-            $componentElementsCount = $componentElements->length;
-            if ($componentElementsCount === 0) {
-                break;
-            }
-            for ($i = 0; $i < $componentElementsCount; $i++) {
-                $componentElement = $componentElements->item($i);
-                if ($componentElement === null) { // component in component innerHTML case
-                    continue;
-                }
-                $component = $this->constructComponent($componentElement->getAttributes(), $componentElement->innerHTML);
-                $componentResultHTML = $getComponentResultHTML($component);
-                $isInBodyTag = false;
-                $parentNode = $componentElement->parentNode;
-                while ($parentNode !== null && isset($parentNode->tagName)) {
-                    if ($parentNode->tagName === 'body') {
-                        $isInBodyTag = true;
-                        break;
-                    }
-                    $parentNode = $parentNode->parentNode;
-                }
-                if ($isInBodyTag) {
-                    $insertTargetName = 'html-server-components-compiler-insert-target';
-                    $componentElement->parentNode->replaceChild($domDocument->createInsertTarget($insertTargetName), $componentElement);
-                    $domDocument->insertHTML($componentResultHTML, $insertTargetName);
-                } else {
-                    $componentElement->parentNode->removeChild($componentElement);
-                    $domDocument->insertHTML($componentResultHTML);
-                }
-            }
+        if ($content instanceof \IvoPetkov\HTMLServerComponent) {
+            $domDocument->loadHTML($getComponentResultHTML($content));
             if (isset($options['recursive']) && $options['recursive'] === false) {
-                break;
+                $disableLevelProcessing = true;
+            }
+        } else {
+            $domDocument->loadHTML($content);
+        }
+        if (!$disableLevelProcessing) {
+            for ($level = 0; $level < 1000; $level++) {
+                $componentElements = $domDocument->getElementsByTagName('component');
+                $componentElementsCount = $componentElements->length;
+                if ($componentElementsCount === 0) {
+                    break;
+                }
+                for ($i = 0; $i < $componentElementsCount; $i++) {
+                    $componentElement = $componentElements->item($i);
+                    if ($componentElement === null) { // component in component innerHTML case
+                        continue;
+                    }
+                    $component = $this->constructComponent($componentElement->getAttributes(), $componentElement->innerHTML);
+                    $componentResultHTML = $getComponentResultHTML($component);
+                    $isInBodyTag = false;
+                    $parentNode = $componentElement->parentNode;
+                    while ($parentNode !== null && isset($parentNode->tagName)) {
+                        if ($parentNode->tagName === 'body') {
+                            $isInBodyTag = true;
+                            break;
+                        }
+                        $parentNode = $parentNode->parentNode;
+                    }
+                    if ($isInBodyTag) {
+                        $insertTargetName = 'html-server-components-compiler-insert-target';
+                        $componentElement->parentNode->insertBefore($domDocument->createInsertTarget($insertTargetName), $componentElement);
+                        $componentElement->parentNode->removeChild($componentElement); // must be before insertHTML because a duplicate elements IDs can occur.
+                        $domDocument->insertHTML($componentResultHTML, $insertTargetName);
+                    } else {
+                        $componentElement->parentNode->removeChild($componentElement);
+                        $domDocument->insertHTML($componentResultHTML);
+                    }
+                }
+                if (isset($options['recursive']) && $options['recursive'] === false) {
+                    break;
+                }
             }
         }
 
