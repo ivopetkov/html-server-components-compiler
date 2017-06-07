@@ -135,8 +135,7 @@ class HTMLServerComponentsCompiler
                 }
                 if ($isInBodyTag) {
                     $insertTargetName = 'html-server-components-compiler-insert-target';
-                    $componentElement->parentNode->insertBefore($domDocument->createInsertTarget($insertTargetName), $componentElement);
-                    $componentElement->parentNode->removeChild($componentElement); // must be before insertHTML because a duplicate elements IDs can occur.
+                    $componentElement->parentNode->replaceChild($domDocument->createInsertTarget($insertTargetName), $componentElement);
                     $domDocument->insertHTML($componentResultHTML, $insertTargetName);
                 } else {
                     $componentElement->parentNode->removeChild($componentElement);
