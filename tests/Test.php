@@ -129,7 +129,6 @@ class Test extends HTMLServerComponentTestCase
     public function testComponentInComponentInnerHTML()
     {
 
-        $_GET['ivo'] = 1;
         $fullFilename1 = $this->createFile('component1.php', '<html><body>text1</body></html>');
         $fullFilename2 = $this->createFile('component2.php', '<html><head><title>hi</title><body><?= $component->innerHTML;?></body>/head></html>');
 

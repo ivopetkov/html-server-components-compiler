@@ -126,11 +126,7 @@ class HTMLServerComponentsCompiler
                 if ($componentElementsCount === 0) {
                     break;
                 }
-                for ($i = 0; $i < $componentElementsCount; $i++) {
-                    $componentElement = $componentElements->item($i);
-                    if ($componentElement === null) { // component in component innerHTML case
-                        continue;
-                    }
+                foreach ($componentElements as $componentElement) {
                     $component = $this->constructComponent($componentElement->getAttributes(), $componentElement->innerHTML);
                     $componentResultHTML = $getComponentResultHTML($component);
                     $isInBodyTag = false;
@@ -144,7 +140,8 @@ class HTMLServerComponentsCompiler
                     }
                     if ($isInBodyTag) {
                         $insertTargetName = 'html-server-components-compiler-insert-target';
-                        $componentElement->parentNode->replaceChild($domDocument->createInsertTarget($insertTargetName), $componentElement);
+                        $componentElement->parentNode->insertBefore($domDocument->createInsertTarget($insertTargetName), $componentElement);
+                        $componentElement->parentNode->removeChild($componentElement); // must be before insertHTML because a duplicate elements IDs can occur.
                         $domDocument->insertHTML($componentResultHTML, $insertTargetName);
                     } else {
                         $componentElement->parentNode->removeChild($componentElement);
