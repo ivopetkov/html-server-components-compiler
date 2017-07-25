@@ -35,16 +35,9 @@ class HTMLServerComponent
      * @param string $name The name of the attribute
      * @param string|null $defaultValue The default value of the attribute (if missing)
      * @return string|null The value of the attribute or the defaultValue specified
-     * @throws \InvalidArgumentException
      */
-    public function getAttribute($name, $defaultValue = null)
+    public function getAttribute(string $name, $defaultValue = null)
     {
-        if (!is_string($name)) {
-            throw new \InvalidArgumentException('');
-        }
-        if (!is_string($defaultValue) && $defaultValue !== null) {
-            throw new \InvalidArgumentException('');
-        }
         $name = strtolower($name);
         return isset($this->attributes[$name]) ? (string) $this->attributes[$name] : $defaultValue;
     }
@@ -55,16 +48,9 @@ class HTMLServerComponent
      * @param string $name The name of the attribute
      * @param string $value The new value of the attribute
      * @return void No value is returned
-     * @throws \InvalidArgumentException
      */
-    public function setAttribute($name, $value)
+    public function setAttribute(string $name, $value)
     {
-        if (!is_string($name)) {
-            throw new \InvalidArgumentException('');
-        }
-        if (!is_string($value)) {
-            throw new \InvalidArgumentException('');
-        }
         $this->attributes[strtolower($name)] = $value;
     }
 
@@ -73,13 +59,9 @@ class HTMLServerComponent
      * 
      * @param string $name The name of the attribute
      * @return void No value is returned
-     * @throws \InvalidArgumentException
      */
-    public function removeAttribute($name)
+    public function removeAttribute(string $name)
     {
-        if (!is_string($name)) {
-            throw new \InvalidArgumentException('');
-        }
         $name = strtolower($name);
         if (isset($this->attributes[$name])) {
             unset($this->attributes[$name]);
@@ -103,13 +85,9 @@ class HTMLServerComponent
      * @param string $name The name of the attribute
      * @param string $value The new value of the attribute
      * @return void No value is returned
-     * @throws \InvalidArgumentException
      */
-    public function __set($name, $value)
+    public function __set(string $name, $value)
     {
-        if (!is_string($value)) {
-            throw new \InvalidArgumentException('');
-        }
         $this->setAttribute($name, $value);
     }
 
@@ -119,7 +97,7 @@ class HTMLServerComponent
      * @param string $name The name of the attribute
      * @return boolean TRUE if the attribute exists, FALSE otherwise
      */
-    public function __isset($name)
+    public function __isset(string $name): bool
     {
         return isset($this->attributes[strtolower($name)]);
     }
@@ -130,7 +108,7 @@ class HTMLServerComponent
      * @param string $name The name of the attribute
      * @return void No value is returned
      */
-    public function __unset($name)
+    public function __unset(string $name)
     {
         $this->removeAttribute($name);
     }
@@ -138,7 +116,7 @@ class HTMLServerComponent
     /**
      * Returns a HTML representation of the component
      */
-    public function __toString()
+    public function __toString(): string
     {
         $html = '<component';
         foreach ($this->attributes as $name => $value) {

@@ -33,16 +33,9 @@ class HTMLServerComponentsCompiler
      * @param string $alias The alias
      * @param string $original The original source name
      * @return void No value is returned
-     * @throws \InvalidArgumentException
      */
-    public function addAlias($alias, $original)
+    public function addAlias(string $alias, string $original)
     {
-        if (!is_string($alias)) {
-            throw new \InvalidArgumentException('');
-        }
-        if (!is_string($original)) {
-            throw new \InvalidArgumentException('');
-        }
         $this->aliases[$alias] = $original;
     }
 
@@ -51,19 +44,16 @@ class HTMLServerComponentsCompiler
      * 
      * @param string|\IvoPetkov\HTMLServerComponent $content The content to be processed
      * @param array $options Compiler options
-     * @throws \InvalidArgumentException
      * @return string The result HTML code
      */
-    public function process($content, $options = [])
+    public function process(string $content, array $options = [])
     {
-        if (!is_string($content) && !($content instanceof \IvoPetkov\HTMLServerComponent)) {
+        if (is_string($content)) {
+            if (strpos($content, '<component') === false) {
+                return $content;
+            }
+        } elseif (!($content instanceof \IvoPetkov\HTMLServerComponent)) {
             throw new \InvalidArgumentException('');
-        }
-        if (!is_array($options)) {
-            throw new \InvalidArgumentException('');
-        }
-        if (is_string($content) && strpos($content, '<component') === false) {
-            return $content;
         }
 
         $getComponentFileContent = static function($file, $component, $variables) {
@@ -163,16 +153,9 @@ class HTMLServerComponentsCompiler
      * @param array $attributes The attributes of the component object
      * @param string $innerHTML The innerHTML of the component object
      * @return \IvoPetkov\HTMLServerComponent A component object
-     * @throws \InvalidArgumentException
      */
-    public function constructComponent($attributes = [], $innerHTML = '')
+    public function constructComponent(array $attributes = [], string $innerHTML = '')
     {
-        if (!is_array($attributes)) {
-            throw new \InvalidArgumentException('');
-        }
-        if (!is_string($innerHTML)) {
-            throw new \InvalidArgumentException('');
-        }
         $component = new \IvoPetkov\HTMLServerComponent();
         $component->attributes = $attributes;
         $component->innerHTML = $innerHTML;
