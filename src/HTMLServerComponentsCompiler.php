@@ -28,6 +28,11 @@ class HTMLServerComponentsCompiler
     private $aliases = [];
 
     /**
+     *
+     */
+    private static $newComponentCache = null;
+
+    /**
      * Adds an alias
      * 
      * @param string $alias The alias
@@ -156,7 +161,10 @@ class HTMLServerComponentsCompiler
      */
     public function constructComponent(array $attributes = [], string $innerHTML = '')
     {
-        $component = new \IvoPetkov\HTMLServerComponent();
+        if (self::$newComponentCache === null) {
+            self::$newComponentCache = new \IvoPetkov\HTMLServerComponent();
+        }
+        $component = clone(self::$newComponentCache);
         $component->attributes = $attributes;
         $component->innerHTML = $innerHTML;
         return $component;
