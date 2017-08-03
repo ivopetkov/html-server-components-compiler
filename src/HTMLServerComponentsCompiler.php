@@ -117,11 +117,26 @@ class HTMLServerComponentsCompiler
         if (!$disableLevelProcessing) {
             for ($level = 0; $level < 1000; $level++) {
                 $componentElements = $domDocument->getElementsByTagName('component');
-                $componentElementsCount = $componentElements->length;
-                if ($componentElementsCount === 0) {
+                if ($componentElements->length === 0) {
                     break;
                 }
+                $insertHTMLSources = [];
+                $list = []; // Save the elements into an array because removeChild() messes up the NodeList
                 foreach ($componentElements as $componentElement) {
+                    $isInOtherComponentTag = false;
+                    $parentNode = $componentElement->parentNode;
+                    while ($parentNode !== null && isset($parentNode->tagName)) {
+                        if ($parentNode->tagName === 'component') {
+                            $isInOtherComponentTag = true;
+                            break;
+                        }
+                        $parentNode = $parentNode->parentNode;
+                    }
+                    if (!$isInOtherComponentTag) {
+                        $list[] = $componentElement;
+                    }
+                }
+                foreach ($list as $componentElement) {
                     $component = $this->constructComponent($componentElement->getAttributes(), $componentElement->innerHTML);
                     $componentResultHTML = $getComponentResultHTML($component);
                     $isInBodyTag = false;
@@ -134,15 +149,16 @@ class HTMLServerComponentsCompiler
                         $parentNode = $parentNode->parentNode;
                     }
                     if ($isInBodyTag) {
-                        $insertTargetName = 'html-server-components-compiler-insert-target';
+                        $insertTargetName = 'html-server-components-compiler-insert-target-' . uniqid();
                         $componentElement->parentNode->insertBefore($domDocument->createInsertTarget($insertTargetName), $componentElement);
                         $componentElement->parentNode->removeChild($componentElement); // must be before insertHTML because a duplicate elements IDs can occur.
-                        $domDocument->insertHTML($componentResultHTML, $insertTargetName);
+                        $insertHTMLSources[] = ['source' => $componentResultHTML, 'target' => $insertTargetName];
                     } else {
                         $componentElement->parentNode->removeChild($componentElement);
-                        $domDocument->insertHTML($componentResultHTML);
+                        $insertHTMLSources[] = ['source' => $componentResultHTML];
                     }
                 }
+                $domDocument->insertHTMLMulti($insertHTMLSources);
                 if (isset($options['recursive']) && $options['recursive'] === false) {
                     break;
                 }
