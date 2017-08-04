@@ -136,7 +136,7 @@ class HTMLServerComponentsCompiler
                         $list[] = $componentElement;
                     }
                 }
-                foreach ($list as $componentElement) {
+                foreach ($list as $i => $componentElement) {
                     $component = $this->constructComponent($componentElement->getAttributes(), $componentElement->innerHTML);
                     $componentResultHTML = $getComponentResultHTML($component);
                     $isInBodyTag = false;
@@ -149,7 +149,7 @@ class HTMLServerComponentsCompiler
                         $parentNode = $parentNode->parentNode;
                     }
                     if ($isInBodyTag) {
-                        $insertTargetName = 'html-server-components-compiler-insert-target-' . uniqid();
+                        $insertTargetName = 'html-server-components-compiler-insert-target-' . $i;
                         $componentElement->parentNode->insertBefore($domDocument->createInsertTarget($insertTargetName), $componentElement);
                         $componentElement->parentNode->removeChild($componentElement); // must be before insertHTML because a duplicate elements IDs can occur.
                         $insertHTMLSources[] = ['source' => $componentResultHTML, 'target' => $insertTargetName];
