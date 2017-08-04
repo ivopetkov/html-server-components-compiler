@@ -76,7 +76,8 @@ class HTMLServerComponent
      */
     public function __get($name)
     {
-        return $this->getAttribute($name);
+        $name = strtolower($name);
+        return isset($this->attributes[$name]) ? (string) $this->attributes[$name] : null;
     }
 
     /**
@@ -88,7 +89,7 @@ class HTMLServerComponent
      */
     public function __set(string $name, $value)
     {
-        $this->setAttribute($name, $value);
+        $this->attributes[strtolower($name)] = $value;
     }
 
     /**
@@ -110,7 +111,10 @@ class HTMLServerComponent
      */
     public function __unset(string $name)
     {
-        $this->removeAttribute($name);
+        $name = strtolower($name);
+        if (isset($this->attributes[$name])) {
+            unset($this->attributes[$name]);
+        }
     }
 
     /**
@@ -122,10 +126,7 @@ class HTMLServerComponent
         foreach ($this->attributes as $name => $value) {
             $html .= ' ' . $name . '="' . htmlspecialchars($value) . '"';
         }
-        $html .= '>';
-        $html .= $this->innerHTML;
-        $html .= '</component>';
-        return $html;
+        return $html . '>' . $this->innerHTML . '</component>';
     }
 
 }
