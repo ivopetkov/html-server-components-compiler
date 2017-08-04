@@ -69,7 +69,7 @@ class HTMLServerComponent
     }
 
     /**
-     * Provides acccess to the component attributes via properties
+     * Provides access to the component attributes via properties
      * 
      * @param string $name The name of the attribute
      * @return string|null The value of the attribute or null if missing
@@ -81,7 +81,7 @@ class HTMLServerComponent
     }
 
     /**
-     * Provides acccess to the component attributes via properties
+     * Provides access to the component attributes via properties
      * 
      * @param string $name The name of the attribute
      * @param string $value The new value of the attribute
@@ -93,7 +93,7 @@ class HTMLServerComponent
     }
 
     /**
-     * Provides acccess to the component attributes via properties
+     * Provides access to the component attributes via properties
      * 
      * @param string $name The name of the attribute
      * @return boolean TRUE if the attribute exists, FALSE otherwise
@@ -104,7 +104,7 @@ class HTMLServerComponent
     }
 
     /**
-     * Provides acccess to the component attributes via properties
+     * Provides access to the component attributes via properties
      * 
      * @param string $name The name of the attribute
      * @return void No value is returned
