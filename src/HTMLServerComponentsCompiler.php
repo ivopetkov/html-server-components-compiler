@@ -3,7 +3,7 @@
 /*
  * HTML Server Components compiler
  * http://ivopetkov.com/b/html-server-components/
- * Copyright 2015-2016, Ivo Petkov
+ * Copyright (c) 2015 Ivo Petkov
  * Free to use under the MIT license.
  */
 
