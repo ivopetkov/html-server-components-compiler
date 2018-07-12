@@ -18,7 +18,7 @@ class Test extends HTMLServerComponentTestCase
      */
     public function testProccessHTML()
     {
-        $fullFilename = $this->createFile('component1.php', '<html><head><meta custom="value"></head><body>text1</body></html>');
+        $fullFilename = $this->makeFile('component1.php', '<html><head><meta custom="value"></head><body>text1</body></html>');
 
         $compiler = new \IvoPetkov\HTMLServerComponentsCompiler();
         $result = $compiler->process('<component src="file:' . $fullFilename . '"/>');
@@ -44,7 +44,7 @@ class Test extends HTMLServerComponentTestCase
      */
     public function testAlias()
     {
-        $fullFilename = $this->createFile('component1.php', '<html><body>text1</body></html>');
+        $fullFilename = $this->makeFile('component1.php', '<html><body>text1</body></html>');
 
         $compiler = new \IvoPetkov\HTMLServerComponentsCompiler();
         $compiler->addAlias('component1', 'file:' . $fullFilename);
@@ -63,7 +63,7 @@ class Test extends HTMLServerComponentTestCase
      */
     public function testCreateComponent()
     {
-        $fullFilename = $this->createFile('component1.php', '<html><body>text1</body></html>');
+        $fullFilename = $this->makeFile('component1.php', '<html><body>text1</body></html>');
 
         $compiler = new \IvoPetkov\HTMLServerComponentsCompiler();
         $component = $compiler->constructComponent(['var1' => '1'], 'hi');
@@ -77,7 +77,7 @@ class Test extends HTMLServerComponentTestCase
      */
     public function testVariables()
     {
-        $fullFilename = $this->createFile('component1.php', '<html><body><?= $component->test1?><?= $test2?></body></html>');
+        $fullFilename = $this->makeFile('component1.php', '<html><body><?= $component->test1?><?= $test2?></body></html>');
 
         $compiler = new \IvoPetkov\HTMLServerComponentsCompiler();
         $component = new \IvoPetkov\HTMLServerComponent();
@@ -97,9 +97,9 @@ class Test extends HTMLServerComponentTestCase
      */
     public function testProccessRecursion()
     {
-        $fullFilename1 = $this->createFile('component1.php', '<html><head><meta custom="value1"></head><body>text1</body></html>');
-        $fullFilename2 = $this->createFile('component2.php', '<html><head><meta custom="value2"></head><body><component src="file:' . urlencode($fullFilename1) . '"></component>text2</body></html>');
-        $fullFilename3 = $this->createFile('component3.php', '<html><head><meta custom="value3"></head><body><component src="file:' . urlencode($fullFilename2) . '"></component>text3</body></html>');
+        $fullFilename1 = $this->makeFile('component1.php', '<html><head><meta custom="value1"></head><body>text1</body></html>');
+        $fullFilename2 = $this->makeFile('component2.php', '<html><head><meta custom="value2"></head><body><component src="file:' . urlencode($fullFilename1) . '"></component>text2</body></html>');
+        $fullFilename3 = $this->makeFile('component3.php', '<html><head><meta custom="value3"></head><body><component src="file:' . urlencode($fullFilename2) . '"></component>text3</body></html>');
 
         $compiler = new \IvoPetkov\HTMLServerComponentsCompiler();
         $result = $compiler->process('<component src="file:' . $fullFilename3 . '"/>');
@@ -129,8 +129,8 @@ class Test extends HTMLServerComponentTestCase
     public function testComponentInComponentInnerHTML()
     {
 
-        $fullFilename1 = $this->createFile('component1.php', '<html><body>text1</body></html>');
-        $fullFilename2 = $this->createFile('component2.php', '<html><head><title>hi</title><body><?= $component->innerHTML;?></body>/head></html>');
+        $fullFilename1 = $this->makeFile('component1.php', '<html><body>text1</body></html>');
+        $fullFilename2 = $this->makeFile('component2.php', '<html><head><title>hi</title><body><?= $component->innerHTML;?></body>/head></html>');
 
         $compiler = new \IvoPetkov\HTMLServerComponentsCompiler();
         $result = $compiler->process('<component src="file:' . $fullFilename2 . '"><component src="file:' . $fullFilename1 . '"/></component>');
@@ -143,7 +143,7 @@ class Test extends HTMLServerComponentTestCase
      */
     public function testComponentAttribute()
     {
-        $fullFilename = $this->createFile('component1.php', '<html><body><?php '
+        $fullFilename = $this->makeFile('component1.php', '<html><body><?php '
                 . 'echo $component->test1;' // 1
                 . '$component->test1 = "2";'
                 . 'echo $component->test1;' // 2

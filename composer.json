@@ -16,11 +16,14 @@
         "ivopetkov/html5-dom-document-php": "^0.5.5|0.6.*"
     },
     "require-dev": {
-        "phpunit/phpunit": "^4.8"
+        "phpunit/phpunit": "7.*"
     },
     "autoload": {
+        "files": ["autoload.php"]
+    },
+    "autoload-dev": {
         "psr-4": {
-            "IvoPetkov\\": "src/"
-        }
+            "": "tests/utilities/"
+        }   
     }
 }
