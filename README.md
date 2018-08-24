@@ -40,7 +40,7 @@ echo $compiler->process('
 
 ## Documentation
 
-Full [documentation](https://github.com/ivopetkov/html-server-components-compiler/blob/master/docs/markdown/index.md) is avaliable as part of this repository.
+Full [documentation](https://github.com/ivopetkov/html-server-components-compiler/blob/master/docs/markdown/index.md) is available as part of this repository.
 
 ## Demo
 
