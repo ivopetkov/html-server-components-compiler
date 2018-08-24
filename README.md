@@ -40,14 +40,14 @@ echo $compiler->process('
 
 ## Documentation
 
-Full [documentation](https://github.com/ivopetkov/html-server-components/blob/master/docs/markdown/index.md) is avaliable as part of this repository.
+Full [documentation](https://github.com/ivopetkov/html-server-components-compiler/blob/master/docs/markdown/index.md) is avaliable as part of this repository.
 
 ## Demo
 
 A demo is available at [http://ivopetkov.github.io/demos/html-server-components/](http://ivopetkov.github.io/demos/html-server-components/). The source is also [there](https://github.com/ivopetkov/ivopetkov.github.io/tree/master/demos/html-server-components/).
 
 ## License
-This project is licensed under the MIT License. See the [license file](https://github.com/ivopetkov/html-server-components/blob/master/LICENSE) for more information.
+This project is licensed under the MIT License. See the [license file](https://github.com/ivopetkov/html-server-components-compiler/blob/master/LICENSE) for more information.
 
 ## Contributing
 Feel free to open new issues and contribute to the project. Let's make it awesome and let's do in a positive way.
