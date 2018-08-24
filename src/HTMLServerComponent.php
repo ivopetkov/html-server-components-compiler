@@ -10,31 +10,31 @@
 namespace IvoPetkov;
 
 /**
- * Used to create the $component object that is passed to the corresponding file
+ * Used to create the $component object that is passed to the corresponding file.
  */
 class HTMLServerComponent
 {
 
     /**
-     * Component tag attributes
+     * Component tag attributes.
      * 
      * @var array 
      */
     public $attributes = [];
 
     /**
-     * Component tag innerHTML
+     * Component tag innerHTML.
      * 
      * @var string 
      */
     public $innerHTML = '';
 
     /**
-     * Returns value of an attribute
+     * Returns value of an attribute.
      * 
-     * @param string $name The name of the attribute
-     * @param string|null $defaultValue The default value of the attribute (if missing)
-     * @return string|null The value of the attribute or the defaultValue specified
+     * @param string $name The name of the attribute.
+     * @param string|null $defaultValue The default value of the attribute (if missing).
+     * @return string|null The value of the attribute or the defaultValue specified.
      */
     public function getAttribute(string $name, $defaultValue = null)
     {
@@ -43,11 +43,11 @@ class HTMLServerComponent
     }
 
     /**
-     * Sets new value to the attribute specified
+     * Sets new value to the attribute specified.
      * 
-     * @param string $name The name of the attribute
-     * @param string $value The new value of the attribute
-     * @return void No value is returned
+     * @param string $name The name of the attribute.
+     * @param string $value The new value of the attribute.
+     * @return void No value is returned.
      */
     public function setAttribute(string $name, $value)
     {
@@ -55,10 +55,10 @@ class HTMLServerComponent
     }
 
     /**
-     * Removes attribute
+     * Removes an attribute.
      * 
-     * @param string $name The name of the attribute
-     * @return void No value is returned
+     * @param string $name The name of the attribute.
+     * @return void No value is returned.
      */
     public function removeAttribute(string $name)
     {
@@ -69,10 +69,10 @@ class HTMLServerComponent
     }
 
     /**
-     * Provides access to the component attributes via properties
+     * Provides access to the component attributes via properties.
      * 
-     * @param string $name The name of the attribute
-     * @return string|null The value of the attribute or null if missing
+     * @param string $name The name of the attribute.
+     * @return string|null The value of the attribute or null if missing.
      */
     public function __get($name)
     {
@@ -81,11 +81,11 @@ class HTMLServerComponent
     }
 
     /**
-     * Provides access to the component attributes via properties
+     * Provides access to the component attributes via properties.
      * 
-     * @param string $name The name of the attribute
-     * @param string $value The new value of the attribute
-     * @return void No value is returned
+     * @param string $name The name of the attribute.
+     * @param string $value The new value of the attribute.
+     * @return void No value is returned.
      */
     public function __set(string $name, $value)
     {
@@ -93,10 +93,10 @@ class HTMLServerComponent
     }
 
     /**
-     * Provides access to the component attributes via properties
+     * Provides access to the component attributes via properties.
      * 
-     * @param string $name The name of the attribute
-     * @return boolean TRUE if the attribute exists, FALSE otherwise
+     * @param string $name The name of the attribute.
+     * @return boolean TRUE if the attribute exists, FALSE otherwise.
      */
     public function __isset(string $name): bool
     {
@@ -104,10 +104,10 @@ class HTMLServerComponent
     }
 
     /**
-     * Provides access to the component attributes via properties
+     * Provides access to the component attributes via properties.
      * 
-     * @param string $name The name of the attribute
-     * @return void No value is returned
+     * @param string $name The name of the attribute.
+     * @return void No value is returned.
      */
     public function __unset(string $name)
     {
@@ -118,7 +118,9 @@ class HTMLServerComponent
     }
 
     /**
-     * Returns a HTML representation of the component
+     * Returns a HTML representation of the component.
+     * 
+     * @return string A HTML representation of the component.
      */
     public function __toString(): string
     {

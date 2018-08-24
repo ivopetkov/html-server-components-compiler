@@ -1,6 +1,6 @@
 # IvoPetkov\HTMLServerComponent::removeAttribute
 
-Removes attribute
+Removes an attribute.
 
 ```php
 public void removeAttribute ( string $name )
@@ -10,13 +10,19 @@ public void removeAttribute ( string $name )
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`$name`
 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The name of the attribute.
+
 ## Returns
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;No value is returned
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;No value is returned.
 
 ## Details
 
 Class: [IvoPetkov\HTMLServerComponent](ivopetkov.htmlservercomponent.class.md)
 
 File: /src/HTMLServerComponent.php
+
+---
+
+[back to index](index.md)
 

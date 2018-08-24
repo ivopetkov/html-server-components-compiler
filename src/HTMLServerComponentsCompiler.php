@@ -16,12 +16,12 @@ class HTMLServerComponentsCompiler
 {
 
     /**
-     * Library version
+     * Library version.
      */
     const VERSION = '0.6.5';
 
     /**
-     * Stores the added aliases
+     * Stores the added aliases.
      * 
      * @var array 
      */
@@ -33,11 +33,11 @@ class HTMLServerComponentsCompiler
     private static $newComponentCache = null;
 
     /**
-     * Adds an alias
+     * Adds an alias.
      * 
-     * @param string $alias The alias
-     * @param string $original The original source name
-     * @return void No value is returned
+     * @param string $alias The alias.
+     * @param string $original The original source name.
+     * @return void No value is returned.
      */
     public function addAlias(string $alias, string $original)
     {
@@ -45,11 +45,11 @@ class HTMLServerComponentsCompiler
     }
 
     /**
-     * Converts components code (if any) into HTML code
+     * Converts components code (if any) into HTML code.
      * 
-     * @param string|\IvoPetkov\HTMLServerComponent $content The content to be processed
-     * @param array $options Compiler options
-     * @return string The result HTML code
+     * @param string|\IvoPetkov\HTMLServerComponent $content The content to be processed.
+     * @param array $options Compiler options.
+     * @return string The result HTML code.
      */
     public function process(string $content, array $options = [])
     {
@@ -169,11 +169,11 @@ class HTMLServerComponentsCompiler
     }
 
     /**
-     * Constructs a component object
+     * Constructs a component object.
      * 
-     * @param array $attributes The attributes of the component object
-     * @param string $innerHTML The innerHTML of the component object
-     * @return \IvoPetkov\HTMLServerComponent A component object
+     * @param array $attributes The attributes of the component object.
+     * @param string $innerHTML The innerHTML of the component object.
+     * @return \IvoPetkov\HTMLServerComponent A component object.
      */
     public function constructComponent(array $attributes = [], string $innerHTML = '')
     {
