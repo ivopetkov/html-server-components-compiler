@@ -30,7 +30,7 @@ class HTMLServerComponent
     public $innerHTML = '';
 
     /**
-     * Returns value of an attribute.
+     * Returns the value of an attribute.
      * 
      * @param string $name The name of the attribute.
      * @param string|null $defaultValue The default value of the attribute (if missing).
@@ -43,10 +43,10 @@ class HTMLServerComponent
     }
 
     /**
-     * Sets new value to the attribute specified.
+     * Sets a new value for attribute specified.
      * 
      * @param string $name The name of the attribute.
-     * @param string $value The new value of the attribute.
+     * @param string $value The new value for attribute.
      * @return void No value is returned.
      */
     public function setAttribute(string $name, $value)
