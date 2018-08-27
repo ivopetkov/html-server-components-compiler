@@ -12,7 +12,7 @@ HTML Server Components compiler. Converts components code into HTML code.
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Adds an alias.
 
-##### public [IvoPetkov\HTMLServerComponent](ivopetkov.htmlservercomponent.class.md) [constructComponent](ivopetkov.htmlservercomponentscompiler.constructcomponent.method.md) ( [ array $attributes = [] ]  [, string $innerHTML = '' ] )
+##### public [IvoPetkov\HTMLServerComponent](ivopetkov.htmlservercomponent.class.md) [makeComponent](ivopetkov.htmlservercomponentscompiler.makecomponent.method.md) ( [ array $attributes = [] [, string $innerHTML = '' ]] )
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Constructs a component object.
 

@@ -16,7 +16,7 @@ Used to create the $component object that is passed to the corresponding file.
 
 ##### public string|null [getAttribute](ivopetkov.htmlservercomponent.getattribute.method.md) ( string $name [, string|null $defaultValue ] )
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns value of an attribute.
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the value of an attribute.
 
 ##### public void [removeAttribute](ivopetkov.htmlservercomponent.removeattribute.method.md) ( string $name )
 
@@ -24,7 +24,7 @@ Used to create the $component object that is passed to the corresponding file.
 
 ##### public void [setAttribute](ivopetkov.htmlservercomponent.setattribute.method.md) ( string $name , string $value )
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets new value to the attribute specified.
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets a new value for attribute specified.
 
 ## Details
 

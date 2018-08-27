@@ -1,6 +1,6 @@
 # IvoPetkov\HTMLServerComponent::getAttribute
 
-Returns value of an attribute.
+Returns the value of an attribute.
 
 ```php
 public string|null getAttribute ( string $name [, string|null $defaultValue ] )
