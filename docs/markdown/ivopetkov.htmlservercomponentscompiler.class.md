@@ -2,10 +2,6 @@
 
 HTML Server Components compiler. Converts components code into HTML code.
 
-## Constants
-
-##### const string VERSION
-
 ## Methods
 
 ##### public void [addAlias](ivopetkov.htmlservercomponentscompiler.addalias.method.md) ( string $alias , string $original )
