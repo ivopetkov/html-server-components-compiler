@@ -61,12 +61,12 @@ class Test extends HTMLServerComponentTestCase
     /**
      * 
      */
-    public function testCreateComponent()
+    public function testMakeComponent()
     {
         $fullFilename = $this->makeFile('component1.php', '<html><body>text1</body></html>');
 
         $compiler = new \IvoPetkov\HTMLServerComponentsCompiler();
-        $component = $compiler->constructComponent(['var1' => '1'], 'hi');
+        $component = $compiler->makeComponent(['var1' => '1'], 'hi');
 
         $expectedResult = '<component var1="1">hi</component>';
         $this->assertTrue((string) $component === $expectedResult);

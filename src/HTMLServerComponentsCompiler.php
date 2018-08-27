@@ -137,7 +137,7 @@ class HTMLServerComponentsCompiler
                     }
                 }
                 foreach ($list as $i => $componentElement) {
-                    $component = $this->constructComponent($componentElement->getAttributes(), $componentElement->innerHTML);
+                    $component = $this->makeComponent($componentElement->getAttributes(), $componentElement->innerHTML);
                     $componentResultHTML = $getComponentResultHTML($component);
                     $isInBodyTag = false;
                     $parentNode = $componentElement->parentNode;
@@ -175,7 +175,7 @@ class HTMLServerComponentsCompiler
      * @param string $innerHTML The innerHTML of the component object.
      * @return \IvoPetkov\HTMLServerComponent A component object.
      */
-    public function constructComponent(array $attributes = [], string $innerHTML = '')
+    public function makeComponent(array $attributes = [], string $innerHTML = '')
     {
         if (self::$newComponentCache === null) {
             self::$newComponentCache = new \IvoPetkov\HTMLServerComponent();
