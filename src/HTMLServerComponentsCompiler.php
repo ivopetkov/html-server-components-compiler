@@ -74,9 +74,9 @@ class HTMLServerComponentsCompiler
         };
 
         $getComponentResultHTML = function($component) use (&$getComponentFileContent, $options) {
-            if (isset($component->attributes['src'])) {
+            $srcAttributeValue = $component->getAttribute('src');
+            if ($srcAttributeValue !== null) {
                 // todo check alias of alias
-                $srcAttributeValue = $component->attributes['src'];
                 if (isset($this->aliases[$srcAttributeValue])) {
                     $sourceParts = explode(':', $this->aliases[$srcAttributeValue], 2);
                 } else {
@@ -176,7 +176,9 @@ class HTMLServerComponentsCompiler
             self::$newComponentCache = new \IvoPetkov\HTMLServerComponent();
         }
         $component = clone(self::$newComponentCache);
-        $component->attributes = $attributes;
+        foreach ($attributes as $name => $value) {
+            $component->setAttribute($name, $value);
+        }
         $component->innerHTML = $innerHTML;
         return $component;
     }

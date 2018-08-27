@@ -20,7 +20,7 @@ class HTMLServerComponent
      * 
      * @var array 
      */
-    public $attributes = [];
+    private $attributes = [];
 
     /**
      * Component tag innerHTML.
@@ -66,6 +66,16 @@ class HTMLServerComponent
         if (isset($this->attributes[$name])) {
             unset($this->attributes[$name]);
         }
+    }
+
+    /**
+     * Returns an array containing all attributes.
+     * 
+     * @return array An associative array containing all attributes.
+     */
+    public function getAttributes(): array
+    {
+        return $this->attributes;
     }
 
     /**
