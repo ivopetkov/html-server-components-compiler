@@ -30,6 +30,13 @@ class HTMLServerComponent
     public $innerHTML = '';
 
     /**
+     * Component tag name.
+     * 
+     * @var string 
+     */
+    public $tagName = 'component';
+
+    /**
      * Returns the value of an attribute.
      * 
      * @param string $name The name of the attribute.
@@ -134,11 +141,11 @@ class HTMLServerComponent
      */
     public function __toString(): string
     {
-        $html = '<component';
+        $html = '<' . $this->tagName;
         foreach ($this->attributes as $name => $value) {
             $html .= ' ' . $name . '="' . htmlspecialchars($value) . '"';
         }
-        return $html . '>' . $this->innerHTML . '</component>';
+        return $html . '>' . $this->innerHTML . '</' . $this->tagName . '>';
     }
 
 }

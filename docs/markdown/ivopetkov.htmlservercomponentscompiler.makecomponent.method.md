@@ -3,7 +3,7 @@
 Constructs a component object.
 
 ```php
-public IvoPetkov\HTMLServerComponent makeComponent ( [ array $attributes = [] [, string $innerHTML = '' ]] )
+public IvoPetkov\HTMLServerComponent makeComponent ( [ array $attributes = [] [, string $innerHTML = '' [, string $tagName = 'component' ]]] )
 ```
 
 ## Parameters
@@ -15,6 +15,10 @@ public IvoPetkov\HTMLServerComponent makeComponent ( [ array $attributes = [] [,
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`$innerHTML`
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The innerHTML of the component object.
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`$tagName`
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The tag name of the component object.
 
 ## Returns
 

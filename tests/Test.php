@@ -61,6 +61,28 @@ class Test extends HTMLServerComponentTestCase
     /**
      * 
      */
+    public function testTags()
+    {
+        $fullFilename = $this->makeFile('component1.php', '<html><body><?= $component->value; ?></body></html>');
+
+        $compiler = new \IvoPetkov\HTMLServerComponentsCompiler();
+        $compiler->addAlias('component1', 'file:' . $fullFilename);
+        $compiler->addTag('mytag', 'file:' . $fullFilename);
+        $compiler->addTag('my-tag', 'component1');
+
+        $result = $compiler->process('<mytag value="text1"/>');
+        $this->assertTrue($result === '<!DOCTYPE html>' . "\n" . '<html><body>text1</body></html>');
+
+        $result = $compiler->process('<my-tag value="text2"/>');
+        $this->assertTrue($result === '<!DOCTYPE html>' . "\n" . '<html><body>text2</body></html>');
+
+        $result = $compiler->process('<mytag value="text1"/><my-tag value="text2"/><component src="component1" value="text3"/><component src="file:' . $fullFilename . '" value="text4"/>');
+        $this->assertTrue($result === '<!DOCTYPE html>' . "\n" . '<html><body>text1text2text3text4</body></html>');
+    }
+
+    /**
+     * 
+     */
     public function testMakeComponent()
     {
         $fullFilename = $this->makeFile('component1.php', '<html><body>text1</body></html>');

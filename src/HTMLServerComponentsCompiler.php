@@ -23,6 +23,13 @@ class HTMLServerComponentsCompiler
     private $aliases = [];
 
     /**
+     * Stores the defined tags.
+     * 
+     * @var array 
+     */
+    private $tags = [];
+
+    /**
      *
      */
     private static $newComponentCache = null;
@@ -40,16 +47,41 @@ class HTMLServerComponentsCompiler
     }
 
     /**
+     * Defines a new tag.
+     * 
+     * @param string $tagName The tag name.
+     * @param string $src The tag source.
+     * @return void No value is returned.
+     * @throws \InvalidArgumentException
+     */
+    public function addTag(string $tagName, string $src)
+    {
+        if (preg_match('/^[a-z\-]+$/', $tagName) !== 1) {
+            throw new \InvalidArgumentException('The tag name provided is not valid! It may contain letters (a-z) and dashes (-).');
+        }
+        $this->tags[strtolower(trim($tagName))] = $src;
+    }
+
+    /**
      * Converts components code (if any) into HTML code.
      * 
      * @param string|\IvoPetkov\HTMLServerComponent $content The content to be processed.
      * @param array $options Compiler options.
      * @return string The result HTML code.
      */
-    public function process(string $content, array $options = [])
+    public function process($content, array $options = [])
     {
+        $tagNames = array_keys($this->tags);
+        $tagNames[] = 'component';
         if (is_string($content)) {
-            if (strpos($content, '<component') === false) {
+            $found = false;
+            foreach ($tagNames as $tagName) {
+                if (strpos($content, '<' . $tagName) !== false) {
+                    $found = true;
+                    break;
+                }
+            }
+            if (!$found) {
                 return $content;
             }
         } elseif (!($content instanceof \IvoPetkov\HTMLServerComponent)) {
@@ -75,6 +107,13 @@ class HTMLServerComponentsCompiler
 
         $getComponentResultHTML = function($component) use (&$getComponentFileContent, $options) {
             $srcAttributeValue = $component->getAttribute('src');
+            if ($srcAttributeValue === null) {
+                if (isset($this->tags[$component->tagName])) {
+                    $srcAttributeValue = $this->tags[$component->tagName];
+                } else {
+                    throw new \Exception('Component tag name is not defined at ' . (string) $component . '!');
+                }
+            }
             if ($srcAttributeValue !== null) {
                 // todo check alias of alias
                 if (isset($this->aliases[$srcAttributeValue])) {
@@ -110,8 +149,9 @@ class HTMLServerComponentsCompiler
             $domDocument->loadHTML($content);
         }
         if (!$disableLevelProcessing) {
+            $tagsQuerySelector = implode(',', $tagNames);
             for ($level = 0; $level < 1000; $level++) {
-                $componentElements = $domDocument->getElementsByTagName('component');
+                $componentElements = $domDocument->querySelectorAll($tagsQuerySelector);
                 if ($componentElements->length === 0) {
                     break;
                 }
@@ -121,7 +161,7 @@ class HTMLServerComponentsCompiler
                     $isInOtherComponentTag = false;
                     $parentNode = $componentElement->parentNode;
                     while ($parentNode !== null && isset($parentNode->tagName)) {
-                        if ($parentNode->tagName === 'component') {
+                        if (array_search($parentNode->tagName, $tagNames) !== false) {
                             $isInOtherComponentTag = true;
                             break;
                         }
@@ -132,7 +172,7 @@ class HTMLServerComponentsCompiler
                     }
                 }
                 foreach ($list as $i => $componentElement) {
-                    $component = $this->makeComponent($componentElement->getAttributes(), $componentElement->innerHTML);
+                    $component = $this->makeComponent($componentElement->getAttributes(), $componentElement->innerHTML, $componentElement->tagName);
                     $componentResultHTML = $getComponentResultHTML($component);
                     $isInBodyTag = false;
                     $parentNode = $componentElement->parentNode;
@@ -168,9 +208,10 @@ class HTMLServerComponentsCompiler
      * 
      * @param array $attributes The attributes of the component object.
      * @param string $innerHTML The innerHTML of the component object.
+     * @param string $tagName The tag name of the component object.
      * @return \IvoPetkov\HTMLServerComponent A component object.
      */
-    public function makeComponent(array $attributes = [], string $innerHTML = '')
+    public function makeComponent(array $attributes = [], string $innerHTML = '', string $tagName = 'component')
     {
         if (self::$newComponentCache === null) {
             self::$newComponentCache = new \IvoPetkov\HTMLServerComponent();
@@ -180,6 +221,7 @@ class HTMLServerComponentsCompiler
             $component->setAttribute($name, $value);
         }
         $component->innerHTML = $innerHTML;
+        $component->tagName = $tagName;
         return $component;
     }
 
