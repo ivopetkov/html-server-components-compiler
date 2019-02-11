@@ -202,6 +202,13 @@ class HTMLServerComponentsCompiler
             }
         }
 
+        $domDocument->modify(
+                HTML5DOMDocument::FIX_MULTIPLE_TITLES |
+                HTML5DOMDocument::FIX_DUPLICATE_METATAGS |
+                HTML5DOMDocument::FIX_MULTIPLE_HEADS |
+                HTML5DOMDocument::FIX_MULTIPLE_BODIES |
+                HTML5DOMDocument::OPTIMIZE_HEAD
+        );
         return $domDocument->saveHTML();
     }
 

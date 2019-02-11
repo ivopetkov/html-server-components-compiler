@@ -184,4 +184,16 @@ class Test extends HTMLServerComponentTestCase
         $this->assertTrue($result === $expectedResult);
     }
 
+    /**
+     * 
+     */
+    public function testHeadContent()
+    {
+
+        $compiler = new \IvoPetkov\HTMLServerComponentsCompiler();
+        $result = $compiler->process('<html><head><title>111</title></head><body><component src="data:base64,' . base64_encode('<html><head><title>222</title></head></html>') . '" /></body></html>');
+        $expectedResult = '<!DOCTYPE html>' . "\n" . '<html><head><title>222</title></head><body></body></html>';
+        $this->assertTrue($result === $expectedResult);
+    }
+
 }
