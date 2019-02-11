@@ -9,6 +9,8 @@
 
 namespace IvoPetkov;
 
+use IvoPetkov\HTML5DOMDocument;
+
 /**
  * HTML Server Components compiler. Converts components code into HTML code.
  */
@@ -139,14 +141,14 @@ class HTMLServerComponentsCompiler
         };
 
         $disableLevelProcessing = false;
-        $domDocument = new \IvoPetkov\HTML5DOMDocument();
+        $domDocument = new HTML5DOMDocument();
         if ($content instanceof \IvoPetkov\HTMLServerComponent) {
-            $domDocument->loadHTML($getComponentResultHTML($content));
+            $domDocument->loadHTML($getComponentResultHTML($content), HTML5DOMDocument::ALLOW_DUPLICATE_IDS);
             if (isset($options['recursive']) && $options['recursive'] === false) {
                 $disableLevelProcessing = true;
             }
         } else {
-            $domDocument->loadHTML($content);
+            $domDocument->loadHTML($content, HTML5DOMDocument::ALLOW_DUPLICATE_IDS);
         }
         if (!$disableLevelProcessing) {
             $tagsQuerySelector = implode(',', $tagNames);
