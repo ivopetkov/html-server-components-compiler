@@ -27,15 +27,15 @@ class Test extends HTMLServerComponentTestCase
 
         $compiler = new \IvoPetkov\HTMLServerComponentsCompiler();
         $result = $compiler->process('<html><body>'
-                . 'text0'
-                . '<component src="file:' . $fullFilename . '"/>'
-                . 'text2'
-                . '</body></html>');
+            . 'text0'
+            . '<component src="file:' . $fullFilename . '"/>'
+            . 'text2'
+            . '</body></html>');
         $expectedResult = '<!DOCTYPE html>' . "\n" . '<html><head><meta custom="value"></head><body>'
-                . 'text0'
-                . 'text1'
-                . 'text2'
-                . '</body></html>';
+            . 'text0'
+            . 'text1'
+            . 'text2'
+            . '</body></html>';
         $this->assertTrue($result === $expectedResult);
     }
 
@@ -166,14 +166,14 @@ class Test extends HTMLServerComponentTestCase
     public function testComponentAttribute()
     {
         $fullFilename = $this->makeFile('component1.php', '<html><body><?php '
-                . 'echo $component->test1;' // 1
-                . '$component->test1 = "2";'
-                . 'echo $component->test1;' // 2
-                . 'echo $component->test2;' // null
-                . 'echo (int)isset($component->test1);' // 1
-                . 'unset($component->test1);'
-                . 'echo (int)isset($component->test1);' // 0
-                . '?></body></html>');
+            . 'echo $component->test1;' // 1
+            . '$component->test1 = "2";'
+            . 'echo $component->test1;' // 2
+            . 'echo $component->test2;' // null
+            . 'echo (int)isset($component->test1);' // 1
+            . 'unset($component->test1);'
+            . 'echo (int)isset($component->test1);' // 0
+            . '?></body></html>');
 
         $compiler = new \IvoPetkov\HTMLServerComponentsCompiler();
         $component = new \IvoPetkov\HTMLServerComponent();
@@ -195,5 +195,4 @@ class Test extends HTMLServerComponentTestCase
         $expectedResult = '<!DOCTYPE html>' . "\n" . '<html><head><title>222</title></head><body></body></html>';
         $this->assertTrue($result === $expectedResult);
     }
-
 }
