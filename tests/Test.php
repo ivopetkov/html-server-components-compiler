@@ -22,7 +22,7 @@ class Test extends HTMLServerComponentTestCase
 
         $compiler = new \IvoPetkov\HTMLServerComponentsCompiler();
         $result = $compiler->process('<component src="file:' . $fullFilename . '"/>');
-        $expectedResult = '<!DOCTYPE html>' . "\n" . '<html><head><meta custom="value"></head><body>text1</body></html>';
+        $expectedResult = '<!DOCTYPE html>' . "\n" . '<html><head><meta custom="value"></head>' . "\n" . '<body>text1</body></html>';
         $this->assertTrue($result === $expectedResult);
 
         $compiler = new \IvoPetkov\HTMLServerComponentsCompiler();
@@ -49,7 +49,7 @@ class Test extends HTMLServerComponentTestCase
         $compiler = new \IvoPetkov\HTMLServerComponentsCompiler();
         $compiler->addAlias('component1', 'file:' . $fullFilename);
 
-        $expectedResult = '<!DOCTYPE html>' . "\n" . '<html><body>text1</body></html>';
+        $expectedResult = '<!DOCTYPE html>' . "\n" . '<html>' . "\n" . '<body>text1</body></html>';
 
         $result = $compiler->process('<component src="file:' . $fullFilename . '" />');
         $this->assertTrue($result === $expectedResult);
@@ -71,13 +71,13 @@ class Test extends HTMLServerComponentTestCase
         $compiler->addTag('my-tag', 'component1');
 
         $result = $compiler->process('<mytag value="text1"/>');
-        $this->assertTrue($result === '<!DOCTYPE html>' . "\n" . '<html><body>text1</body></html>');
+        $this->assertTrue($result === '<!DOCTYPE html>' . "\n" . '<html>' . "\n" . '<body>text1</body></html>');
 
         $result = $compiler->process('<my-tag value="text2"/>');
-        $this->assertTrue($result === '<!DOCTYPE html>' . "\n" . '<html><body>text2</body></html>');
+        $this->assertTrue($result === '<!DOCTYPE html>' . "\n" . '<html>' . "\n" . '<body>text2</body></html>');
 
         $result = $compiler->process('<mytag value="text1"/><my-tag value="text2"/><component src="component1" value="text3"/><component src="file:' . $fullFilename . '" value="text4"/>');
-        $this->assertTrue($result === '<!DOCTYPE html>' . "\n" . '<html><body>text1text2text3text4</body></html>');
+        $this->assertTrue($result === '<!DOCTYPE html>' . "\n" . '<html>' . "\n" . '<body>text1text2text3text4</body></html>');
     }
 
     /**
@@ -125,11 +125,11 @@ class Test extends HTMLServerComponentTestCase
 
         $compiler = new \IvoPetkov\HTMLServerComponentsCompiler();
         $result = $compiler->process('<component src="file:' . $fullFilename3 . '"/>');
-        $expectedResult = '<!DOCTYPE html>' . "\n" . '<html><head><meta custom="value3"><meta custom="value2"><meta custom="value1"></head><body>text1text2text3</body></html>';
+        $expectedResult = '<!DOCTYPE html>' . "\n" . '<html><head><meta custom="value3"><meta custom="value2"><meta custom="value1"></head>' . "\n" . '<body>text1text2text3</body></html>';
         $this->assertTrue($result === $expectedResult);
 
         $result = $compiler->process('<component src="file:' . $fullFilename3 . '"/>', ['recursive' => false]);
-        $expectedResult = '<!DOCTYPE html>' . "\n" . '<html><head><meta custom="value3"></head><body><component src="file:' . urlencode($fullFilename2) . '"></component>text3</body></html>';
+        $expectedResult = '<!DOCTYPE html>' . "\n" . '<html><head><meta custom="value3"></head>' . "\n" . '<body><component src="file:' . urlencode($fullFilename2) . '"></component>text3</body></html>';
         $this->assertTrue($result === $expectedResult);
     }
 
@@ -141,7 +141,7 @@ class Test extends HTMLServerComponentTestCase
 
         $compiler = new \IvoPetkov\HTMLServerComponentsCompiler();
         $result = $compiler->process('<component src="data:base64,' . base64_encode('<html><body>text1</body></html>') . '" />');
-        $expectedResult = '<!DOCTYPE html>' . "\n" . '<html><body>text1</body></html>';
+        $expectedResult = '<!DOCTYPE html>' . "\n" . '<html>' . "\n" . '<body>text1</body></html>';
         $this->assertTrue($result === $expectedResult);
     }
 
@@ -156,7 +156,7 @@ class Test extends HTMLServerComponentTestCase
 
         $compiler = new \IvoPetkov\HTMLServerComponentsCompiler();
         $result = $compiler->process('<component src="file:' . $fullFilename2 . '"><component src="file:' . $fullFilename1 . '"/></component>');
-        $expectedResult = '<!DOCTYPE html>' . "\n" . '<html><head><title>hi</title></head><body>text1</body></html>';
+        $expectedResult = '<!DOCTYPE html>' . "\n" . '<html><head><title>hi</title></head>' . "\n" . '<body>text1</body></html>';
         $this->assertTrue($result === $expectedResult);
     }
 
