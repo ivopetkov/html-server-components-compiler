@@ -200,6 +200,20 @@ class Test extends HTMLServerComponentTestCase
     /**
      * 
      */
+    public function testComponentRemoveAttributes()
+    {
+
+        $component = new \IvoPetkov\HTMLServerComponent();
+        $component->setAttributes(['aTTR1' => 'value1', 'attr2' => 'value2', 'attr3' => 'value3']);
+        $component->removeAttributes(['attr1', 'Attr3']);
+        $result = (string) $component;
+        $expectedResult = '<component attr2="value2"></component>';
+        $this->assertTrue($result === $expectedResult);
+    }
+
+    /**
+     * 
+     */
     public function testHeadContent()
     {
 

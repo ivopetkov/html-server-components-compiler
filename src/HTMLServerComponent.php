@@ -99,6 +99,22 @@ class HTMLServerComponent
     }
 
     /**
+     * Removes the attributes specified.
+     *
+     * @param array $attributes An array containing the names of the attributes to remove.
+     * @return void
+     */
+    public function removeAttributes(array $attributes)
+    {
+        foreach ($attributes as $name) {
+            $name = strtolower($name);
+            if (isset($this->attributes[$name])) {
+                unset($this->attributes[$name]);
+            }
+        }
+    }
+
+    /**
      * Provides access to the component attributes via properties.
      * 
      * @param string $name The name of the attribute.
