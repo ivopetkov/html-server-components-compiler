@@ -86,6 +86,19 @@ class HTMLServerComponent
     }
 
     /**
+     * Sets the attributes specified.
+     *
+     * @param array $attributes An associative array containing the attributes to set.
+     * @return void
+     */
+    public function setAttributes(array $attributes)
+    {
+        foreach ($attributes as $name => $value) {
+            $this->attributes[strtolower($name)] = $value;
+        }
+    }
+
+    /**
      * Provides access to the component attributes via properties.
      * 
      * @param string $name The name of the attribute.
@@ -147,5 +160,4 @@ class HTMLServerComponent
         }
         return $html . '>' . $this->innerHTML . '</' . $this->tagName . '>';
     }
-
 }
