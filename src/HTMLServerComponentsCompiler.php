@@ -118,11 +118,7 @@ class HTMLServerComponentsCompiler
             }
             if ($srcAttributeValue !== null) {
                 // todo check alias of alias
-                if (isset($this->aliases[$srcAttributeValue])) {
-                    $sourceParts = explode(':', $this->aliases[$srcAttributeValue], 2);
-                } else {
-                    $sourceParts = explode(':', $srcAttributeValue, 2);
-                }
+                $sourceParts = explode(':', isset($this->aliases[$srcAttributeValue]) ? $this->aliases[$srcAttributeValue] : $srcAttributeValue, 2);
                 if (isset($sourceParts[0], $sourceParts[1])) {
                     $scheme = $sourceParts[0];
                     if ($scheme === 'data') {
@@ -220,9 +216,7 @@ class HTMLServerComponentsCompiler
             self::$newComponentCache = new \IvoPetkov\HTMLServerComponent();
         }
         $component = clone (self::$newComponentCache);
-        foreach ($attributes as $name => $value) {
-            $component->setAttribute($name, $value);
-        }
+        $component->setAttributes($attributes);
         $component->innerHTML = $innerHTML;
         $component->tagName = $tagName;
         return $component;
