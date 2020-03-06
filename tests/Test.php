@@ -222,4 +222,16 @@ class Test extends HTMLServerComponentTestCase
         $expectedResult = '<!DOCTYPE html>' . "\n" . '<html><head><title>222</title></head><body></body></html>';
         $this->assertTrue($result === $expectedResult);
     }
+
+    /**
+     * 
+     */
+    public function testDifferentComponentLocations()
+    {
+
+        $compiler = new \IvoPetkov\HTMLServerComponentsCompiler();
+        $result = $compiler->process('<html><head><component src="data:base64,' . base64_encode('<body><script>var a1=1;</script><div>1</div></body>') . '" /></head><body><component src="data:base64,' . base64_encode('<script>var a2=2;</script><div>2</div>') . '" /></body></html>');
+        $expectedResult = '<!DOCTYPE html>' . "\n" . '<html><head></head><body><script>var a2=2;</script><div>2</div><script>var a1=1;</script><div>1</div></body></html>';
+        $this->assertTrue($result === $expectedResult);
+    }
 }

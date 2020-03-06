@@ -155,39 +155,32 @@ class HTMLServerComponentsCompiler
                 }
                 $insertHTMLSources = [];
                 $list = []; // Save the elements into an array because removeChild() messes up the NodeList
-                foreach ($componentElements as $componentElement) {
-                    $isInOtherComponentTag = false;
+                foreach ($componentElements as $index => $componentElement) {
                     $parentNode = $componentElement->parentNode;
+                    $list[$index] = [$componentElement, $parentNode, []]; // The last one will contain the parents tag names
                     while ($parentNode !== null && isset($parentNode->tagName)) {
-                        if (array_search($parentNode->tagName, $tagNames) !== false) {
-                            $isInOtherComponentTag = true;
+                        $tagName = $parentNode->tagName;
+                        $list[$index][2][] = $tagName;
+                        if ($tagName === 'head' || $tagName === 'body') {
                             break;
                         }
                         $parentNode = $parentNode->parentNode;
-                    }
-                    if (!$isInOtherComponentTag) {
-                        $list[] = $componentElement;
                     }
                 }
-                foreach ($list as $i => $componentElement) {
+                foreach ($list as $index => $componentData) {
+                    if (!empty(array_intersect($componentData[2], $tagNames))) {
+                        continue;
+                    }
+                    $componentElement = $componentData[0];
                     $component = $this->makeComponent($componentElement->getAttributes(), $componentElement->innerHTML, $componentElement->tagName);
                     $componentResultHTML = $getComponentResultHTML($component);
-                    $isInBodyTag = false;
-                    $parentNode = $componentElement->parentNode;
-                    while ($parentNode !== null && isset($parentNode->tagName)) {
-                        if ($parentNode->tagName === 'body') {
-                            $isInBodyTag = true;
-                            break;
-                        }
-                        $parentNode = $parentNode->parentNode;
-                    }
-                    if ($isInBodyTag) {
-                        $insertTargetName = 'html-server-components-compiler-insert-target-' . $i;
-                        $componentElement->parentNode->insertBefore($domDocument->createInsertTarget($insertTargetName), $componentElement);
-                        $componentElement->parentNode->removeChild($componentElement); // must be before insertHTML because a duplicate elements IDs can occur.
+                    if (array_search('body', $componentData[2]) !== false) {
+                        $insertTargetName = 'html-server-components-compiler-insert-target-' . $index;
+                        $componentData[1]->insertBefore($domDocument->createInsertTarget($insertTargetName), $componentElement);
+                        $componentData[1]->removeChild($componentElement); // must be before insertHTML because a duplicate elements IDs can occur.
                         $insertHTMLSources[] = ['source' => $componentResultHTML, 'target' => $insertTargetName];
                     } else {
-                        $componentElement->parentNode->removeChild($componentElement);
+                        $componentData[1]->removeChild($componentElement);
                         $insertHTMLSources[] = ['source' => $componentResultHTML];
                     }
                 }
