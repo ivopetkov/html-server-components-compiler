@@ -90,7 +90,7 @@ class HTMLServerComponentsCompiler
             throw new \InvalidArgumentException('');
         }
 
-        $getComponentFileContent = static function($file, $component, $variables) {
+        $getComponentFileContent = static function ($file, $component, $variables) {
             if (is_file($file)) {
                 $__componentFile = $file;
                 unset($file);
@@ -107,7 +107,7 @@ class HTMLServerComponentsCompiler
             }
         };
 
-        $getComponentResultHTML = function($component) use (&$getComponentFileContent, $options) {
+        $getComponentResultHTML = function ($component) use (&$getComponentFileContent, $options) {
             $srcAttributeValue = $component->getAttribute('src');
             if ($srcAttributeValue === null) {
                 if (isset($this->tags[$component->tagName])) {
@@ -202,13 +202,7 @@ class HTMLServerComponentsCompiler
             }
         }
 
-        $domDocument->modify(
-                HTML5DOMDocument::FIX_MULTIPLE_TITLES |
-                HTML5DOMDocument::FIX_DUPLICATE_METATAGS |
-                HTML5DOMDocument::FIX_MULTIPLE_HEADS |
-                HTML5DOMDocument::FIX_MULTIPLE_BODIES |
-                HTML5DOMDocument::OPTIMIZE_HEAD
-        );
+        $domDocument->modify(HTML5DOMDocument::FIX_MULTIPLE_TITLES | HTML5DOMDocument::FIX_DUPLICATE_METATAGS | HTML5DOMDocument::FIX_MULTIPLE_HEADS | HTML5DOMDocument::FIX_MULTIPLE_BODIES | HTML5DOMDocument::OPTIMIZE_HEAD);
         return $domDocument->saveHTML();
     }
 
@@ -225,7 +219,7 @@ class HTMLServerComponentsCompiler
         if (self::$newComponentCache === null) {
             self::$newComponentCache = new \IvoPetkov\HTMLServerComponent();
         }
-        $component = clone(self::$newComponentCache);
+        $component = clone (self::$newComponentCache);
         foreach ($attributes as $name => $value) {
             $component->setAttribute($name, $value);
         }
@@ -233,5 +227,4 @@ class HTMLServerComponentsCompiler
         $component->tagName = $tagName;
         return $component;
     }
-
 }

@@ -1,7 +1,10 @@
 {
     "name": "ivopetkov/html-server-components-compiler",
     "description": "HTML Server Components compiler",
-    "keywords": ["HTML Server Components compiler", "HTML"],
+    "keywords": [
+        "HTML Server Components compiler",
+        "HTML"
+    ],
     "homepage": "https://github.com/ivopetkov/html-server-components-compiler",
     "license": "MIT",
     "authors": [
@@ -20,11 +23,13 @@
         "ivopetkov/docs-generator": "0.1.*"
     },
     "autoload": {
-        "files": ["autoload.php"]
+        "files": [
+            "autoload.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {
             "": "tests/utilities/"
-        }   
+        }
     }
 }

@@ -17,4 +17,3 @@ spl_autoload_register(function ($class) use ($classes) {
         require $classes[$class];
     }
 });
-
