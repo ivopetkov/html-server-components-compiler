@@ -15,11 +15,10 @@
         }
     ],
     "require": {
-        "php": "7.0.*|7.1.*|7.2.*|7.3.*|7.4.*|8.0.*",
+        "php": "7.0.*|7.1.*|7.2.*|7.3.*|7.4.*|8.0.*|8.1.*",
         "ivopetkov/html5-dom-document-php": "2.*"
     },
     "require-dev": {
-        "phpunit/phpunit": "6.*|7.*|8.*|9.*",
         "ivopetkov/docs-generator": "0.1.*"
     },
     "autoload": {

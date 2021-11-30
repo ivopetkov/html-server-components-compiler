@@ -172,7 +172,7 @@ class HTMLServerComponent
     {
         $html = '<' . $this->tagName;
         foreach ($this->attributes as $name => $value) {
-            $html .= ' ' . $name . '="' . htmlspecialchars($value) . '"';
+            $html .= ' ' . $name . '="' . htmlspecialchars((string)$value) . '"';
         }
         return $html . '>' . $this->innerHTML . '</' . $this->tagName . '>';
     }
