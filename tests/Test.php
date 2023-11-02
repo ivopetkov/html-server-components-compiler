@@ -22,8 +22,8 @@ class Test extends HTMLServerComponentTestCase
 
         $compiler = new \IvoPetkov\HTMLServerComponentsCompiler();
         $result = $compiler->process('<component src="file:' . $fullFilename . '"/>');
-        $expectedResult = '<!DOCTYPE html>' . "\n" . '<html><head><meta custom="value"></head>' . "\n" . '<body>text1</body></html>';
-        $this->assertTrue($result === $expectedResult);
+        $expectedResult = '<!DOCTYPE html><html><head><meta custom="value"></head><body>text1</body></html>';
+        $this->assertEquals($this->removeNewLines($result), $expectedResult);
 
         $compiler = new \IvoPetkov\HTMLServerComponentsCompiler();
         $result = $compiler->process('<html><body>'
@@ -31,12 +31,12 @@ class Test extends HTMLServerComponentTestCase
             . '<component src="file:' . $fullFilename . '"/>'
             . 'text2'
             . '</body></html>');
-        $expectedResult = '<!DOCTYPE html>' . "\n" . '<html><head><meta custom="value"></head><body>'
+        $expectedResult = '<!DOCTYPE html><html><head><meta custom="value"></head><body>'
             . 'text0'
             . 'text1'
             . 'text2'
             . '</body></html>';
-        $this->assertTrue($result === $expectedResult);
+        $this->assertEquals($this->removeNewLines($result), $expectedResult);
     }
 
     /**
@@ -49,13 +49,13 @@ class Test extends HTMLServerComponentTestCase
         $compiler = new \IvoPetkov\HTMLServerComponentsCompiler();
         $compiler->addAlias('component1', 'file:' . $fullFilename);
 
-        $expectedResult = '<!DOCTYPE html>' . "\n" . '<html>' . "\n" . '<body>text1</body></html>';
+        $expectedResult = '<!DOCTYPE html><html><body>text1</body></html>';
 
         $result = $compiler->process('<component src="file:' . $fullFilename . '" />');
-        $this->assertTrue($result === $expectedResult);
+        $this->assertEquals($this->removeNewLines($result), $expectedResult);
 
         $result = $compiler->process('<component src="component1" />');
-        $this->assertTrue($result === $expectedResult);
+        $this->assertEquals($this->removeNewLines($result), $expectedResult);
     }
 
     /**
@@ -71,13 +71,13 @@ class Test extends HTMLServerComponentTestCase
         $compiler->addTag('my-tag', 'component1');
 
         $result = $compiler->process('<mytag value="text1"/>');
-        $this->assertTrue($result === '<!DOCTYPE html>' . "\n" . '<html>' . "\n" . '<body>text1</body></html>');
+        $this->assertEquals($this->removeNewLines($result), '<!DOCTYPE html><html><body>text1</body></html>');
 
         $result = $compiler->process('<my-tag value="text2"/>');
-        $this->assertTrue($result === '<!DOCTYPE html>' . "\n" . '<html>' . "\n" . '<body>text2</body></html>');
+        $this->assertEquals($this->removeNewLines($result), '<!DOCTYPE html><html><body>text2</body></html>');
 
         $result = $compiler->process('<mytag value="text1"/><my-tag value="text2"/><component src="component1" value="text3"/><component src="file:' . $fullFilename . '" value="text4"/>');
-        $this->assertTrue($result === '<!DOCTYPE html>' . "\n" . '<html>' . "\n" . '<body>text1text2text3text4</body></html>');
+        $this->assertEquals($this->removeNewLines($result), '<!DOCTYPE html><html><body>text1text2text3text4</body></html>');
     }
 
     /**
@@ -91,7 +91,7 @@ class Test extends HTMLServerComponentTestCase
         $component = $compiler->makeComponent(['var1' => '1'], 'hi');
 
         $expectedResult = '<component var1="1">hi</component>';
-        $this->assertTrue((string) $component === $expectedResult);
+        $this->assertEquals((string) $component, $expectedResult);
     }
 
     /**
@@ -110,8 +110,8 @@ class Test extends HTMLServerComponentTestCase
                 'test2' => 2
             ]
         ]);
-        $expectedResult = '<!DOCTYPE html>' . "\n" . '<html><body>12</body></html>';
-        $this->assertTrue($result === $expectedResult);
+        $expectedResult = '<!DOCTYPE html><html><body>12</body></html>';
+        $this->assertEquals($this->removeNewLines($result), $expectedResult);
     }
 
     /**
@@ -125,12 +125,12 @@ class Test extends HTMLServerComponentTestCase
 
         $compiler = new \IvoPetkov\HTMLServerComponentsCompiler();
         $result = $compiler->process('<component src="file:' . $fullFilename3 . '"/>');
-        $expectedResult = '<!DOCTYPE html>' . "\n" . '<html><head><meta custom="value3"><meta custom="value2"><meta custom="value1"></head>' . "\n" . '<body>text1text2text3</body></html>';
-        $this->assertTrue($result === $expectedResult);
+        $expectedResult = '<!DOCTYPE html><html><head><meta custom="value3"><meta custom="value2"><meta custom="value1"></head><body>text1text2text3</body></html>';
+        $this->assertEquals($this->removeNewLines($result), $expectedResult);
 
         $result = $compiler->process('<component src="file:' . $fullFilename3 . '"/>', ['recursive' => false]);
-        $expectedResult = '<!DOCTYPE html>' . "\n" . '<html><head><meta custom="value3"></head>' . "\n" . '<body><component src="file:' . urlencode($fullFilename2) . '"></component>text3</body></html>';
-        $this->assertTrue($result === $expectedResult);
+        $expectedResult = '<!DOCTYPE html><html><head><meta custom="value3"></head><body><component src="file:' . urlencode($fullFilename2) . '"></component>text3</body></html>';
+        $this->assertEquals($this->removeNewLines($result), $expectedResult);
     }
 
     /**
@@ -141,8 +141,8 @@ class Test extends HTMLServerComponentTestCase
 
         $compiler = new \IvoPetkov\HTMLServerComponentsCompiler();
         $result = $compiler->process('<component src="data:base64,' . base64_encode('<html><body>text1</body></html>') . '" />');
-        $expectedResult = '<!DOCTYPE html>' . "\n" . '<html>' . "\n" . '<body>text1</body></html>';
-        $this->assertTrue($result === $expectedResult);
+        $expectedResult = '<!DOCTYPE html><html><body>text1</body></html>';
+        $this->assertEquals($this->removeNewLines($result), $expectedResult);
     }
 
     /**
@@ -156,8 +156,8 @@ class Test extends HTMLServerComponentTestCase
 
         $compiler = new \IvoPetkov\HTMLServerComponentsCompiler();
         $result = $compiler->process('<component src="file:' . $fullFilename2 . '"><component src="file:' . $fullFilename1 . '"/></component>');
-        $expectedResult = '<!DOCTYPE html>' . "\n" . '<html><head><title>hi</title></head>' . "\n" . '<body>text1</body></html>';
-        $this->assertTrue($result === $expectedResult);
+        $expectedResult = '<!DOCTYPE html><html><head><title>hi</title></head><body>text1</body></html>';
+        $this->assertEquals($this->removeNewLines($result), $expectedResult);
     }
 
     /**
@@ -180,8 +180,8 @@ class Test extends HTMLServerComponentTestCase
         $component->src = 'file:' . $fullFilename;
         $component->test1 = '1';
         $result = $compiler->process($component);
-        $expectedResult = '<!DOCTYPE html>' . "\n" . '<html><body>1210</body></html>';
-        $this->assertTrue($result === $expectedResult);
+        $expectedResult = '<!DOCTYPE html><html><body>1210</body></html>';
+        $this->assertEquals($this->removeNewLines($result), $expectedResult);
     }
 
     /**
@@ -194,7 +194,7 @@ class Test extends HTMLServerComponentTestCase
         $component->setAttributes(['aTTR1' => 'value1', 'attr2' => 'value2']);
         $result = (string) $component;
         $expectedResult = '<component attr1="value1" attr2="value2"></component>';
-        $this->assertTrue($result === $expectedResult);
+        $this->assertEquals($result, $expectedResult);
     }
 
     /**
@@ -208,7 +208,7 @@ class Test extends HTMLServerComponentTestCase
         $component->removeAttributes(['attr1', 'Attr3']);
         $result = (string) $component;
         $expectedResult = '<component attr2="value2"></component>';
-        $this->assertTrue($result === $expectedResult);
+        $this->assertEquals($result, $expectedResult);
     }
 
     /**
@@ -219,8 +219,8 @@ class Test extends HTMLServerComponentTestCase
 
         $compiler = new \IvoPetkov\HTMLServerComponentsCompiler();
         $result = $compiler->process('<html><head><title>111</title></head><body><component src="data:base64,' . base64_encode('<html><head><title>222</title></head></html>') . '" /></body></html>');
-        $expectedResult = '<!DOCTYPE html>' . "\n" . '<html><head><title>222</title></head><body></body></html>';
-        $this->assertTrue($result === $expectedResult);
+        $expectedResult = '<!DOCTYPE html><html><head><title>222</title></head><body></body></html>';
+        $this->assertEquals($this->removeNewLines($result), $expectedResult);
     }
 
     /**
@@ -231,7 +231,17 @@ class Test extends HTMLServerComponentTestCase
 
         $compiler = new \IvoPetkov\HTMLServerComponentsCompiler();
         $result = $compiler->process('<html><head><component src="data:base64,' . base64_encode('<body><script>var a1=1;</script><div>1</div></body>') . '" /></head><body><component src="data:base64,' . base64_encode('<script>var a2=2;</script><div>2</div>') . '" /></body></html>');
-        $expectedResult = '<!DOCTYPE html>' . "\n" . '<html><head></head><body><script>var a2=2;</script><div>2</div><script>var a1=1;</script><div>1</div></body></html>';
-        $this->assertTrue($result === $expectedResult);
+        $expectedResult = '<!DOCTYPE html><html><head></head><body><script>var a2=2;</script><div>2</div><script>var a1=1;</script><div>1</div></body></html>';
+        $this->assertEquals($this->removeNewLines($result), $expectedResult);
+    }
+
+    /**
+     * 
+     * @param string $text
+     * @return string
+     */
+    private function removeNewLines(string $text): string
+    {
+        return str_replace("\n", '', $text);
     }
 }
