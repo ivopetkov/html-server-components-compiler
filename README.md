@@ -10,11 +10,8 @@ Instead of using template engines or PHP includes in your HTML code use the &lt;
 - Automatically places the included file HTML code into the proper places (Tags in the `head` go in the parent document `head`).
 - Makes easy to test each component because each component outputs full HTML code.
 
-[![Build Status](https://travis-ci.org/ivopetkov/html-server-components-compiler.svg)](https://travis-ci.org/ivopetkov/html-server-components-compiler)
 [![Latest Stable Version](https://poser.pugx.org/ivopetkov/html-server-components-compiler/v/stable)](https://packagist.org/packages/ivopetkov/html-server-components-compiler)
-[![codecov.io](https://codecov.io/github/ivopetkov/html-server-components-compiler/coverage.svg?branch=master)](https://codecov.io/github/ivopetkov/html-server-components-compiler?branch=master)
 [![License](https://poser.pugx.org/ivopetkov/html-server-components-compiler/license)](https://packagist.org/packages/ivopetkov/html-server-components-compiler)
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/a27773a51b56467f9e1c240c2a2bd2d0)](https://www.codacy.com/app/ivo_2/html-server-components-compiler)
 
 ## Install via Composer
 
