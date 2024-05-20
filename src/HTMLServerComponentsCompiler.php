@@ -58,8 +58,8 @@ class HTMLServerComponentsCompiler
      */
     public function addTag(string $tagName, string $src)
     {
-        if (preg_match('/^[a-z\-]+$/', $tagName) !== 1) {
-            throw new \InvalidArgumentException('The tag name provided is not valid! It may contain letters (a-z) and dashes (-).');
+        if (preg_match('/^[a-z0-9\-]+$/', $tagName) !== 1) {
+            throw new \InvalidArgumentException('The tag name provided is not valid! It may contain letters (a-z), numbers (0-9) and dashes (-).');
         }
         $this->tags[strtolower(trim($tagName))] = $src;
     }
