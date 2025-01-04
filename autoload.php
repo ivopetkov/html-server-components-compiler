@@ -12,7 +12,7 @@ $classes = array(
     'IvoPetkov\HTMLServerComponentsCompiler' => __DIR__ . '/src/HTMLServerComponentsCompiler.php'
 );
 
-spl_autoload_register(function ($class) use ($classes) {
+spl_autoload_register(function ($class) use ($classes): void {
     if (isset($classes[$class])) {
         require $classes[$class];
     }
