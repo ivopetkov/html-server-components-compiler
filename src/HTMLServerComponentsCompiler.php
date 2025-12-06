@@ -208,7 +208,7 @@ class HTMLServerComponentsCompiler
         if (self::$newComponentCache === null) {
             self::$newComponentCache = new \IvoPetkov\HTMLServerComponent();
         }
-        $component = clone (self::$newComponentCache);
+        $component = clone(self::$newComponentCache);
         $component->setAttributes($attributes);
         $component->innerHTML = $innerHTML;
         $component->tagName = $tagName;
