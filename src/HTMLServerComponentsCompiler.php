@@ -107,6 +107,8 @@ class HTMLServerComponentsCompiler
             }
         };
 
+        $fragmentsReferences = [];
+
         $getComponentResultHTML = function ($component) use (&$getComponentFileContent, $options) {
             $srcAttributeValue = $component->getAttribute('src');
             if ($srcAttributeValue === null) {
@@ -123,7 +125,7 @@ class HTMLServerComponentsCompiler
                     $scheme = $sourceParts[0];
                     if ($scheme === 'data') {
                         if (substr($sourceParts[1], 0, 7) === 'base64,') {
-                            return base64_decode(substr($sourceParts[1], 7)); //$this->process(, isset($componentOptions) ? $componentOptions : $options);
+                            return base64_decode(substr($sourceParts[1], 7));
                         }
                         throw new \Exception('Components data URI scheme only supports base64 (data:base64,ABCD...)!');
                     } elseif ($scheme === 'file') {
@@ -174,6 +176,20 @@ class HTMLServerComponentsCompiler
                     $componentElement = $componentData[0];
                     $component = $this->makeComponent($componentElement->getAttributes(), $componentElement->innerHTML, $componentElement->tagName);
                     $componentResultHTML = $getComponentResultHTML($component);
+
+                    $matches = null;
+                    preg_match_all('/\<component\-fragment.*?src=\"(.*?)\".*?\>/', $componentResultHTML, $matches);
+                    if (!empty($matches[0])) {
+                        foreach ($matches[1] as $match) {
+                            $matchIndex = array_search($match, $fragmentsReferences);
+                            if ($matchIndex === false) {
+                                $fragmentsReferences[] = $match;
+                                $matchIndex = sizeof($fragmentsReferences) - 1;
+                            }
+                            $componentResultHTML = str_replace($match, 'internal-ref:' . $matchIndex, $componentResultHTML);
+                        }
+                    }
+
                     if (array_search('body', $componentData[2]) !== false) {
                         $insertTargetName = 'html-server-components-compiler-insert-target-' . $index;
                         $componentData[1]->insertBefore($domDocument->createInsertTarget($insertTargetName), $componentElement);
@@ -185,13 +201,42 @@ class HTMLServerComponentsCompiler
                     }
                 }
                 $domDocument->insertHTMLMulti($insertHTMLSources);
+                $componentFragmentsElements = $domDocument->querySelectorAll('component-fragment');
+                if ($componentFragmentsElements->length > 0) {
+                    $existingComponentFragments = [];
+                    foreach ($componentFragmentsElements as $componentFragmentsElement) {
+                        $componentFragmentID = $componentFragmentsElement->id;
+                        if (isset($existingComponentFragments[$componentFragmentID])) {
+                            $componentFragmentsElement->parentNode->removeChild($componentFragmentsElement);
+                        } else {
+                            $existingComponentFragments[$componentFragmentID] = true;
+                        }
+                    }
+                }
                 if (isset($options['recursive']) && $options['recursive'] === false) {
                     break;
                 }
             }
         }
 
-        $domDocument->modify(HTML5DOMDocument::FIX_MULTIPLE_TITLES | HTML5DOMDocument::FIX_DUPLICATE_METATAGS | HTML5DOMDocument::FIX_MULTIPLE_HEADS | HTML5DOMDocument::FIX_MULTIPLE_BODIES | HTML5DOMDocument::OPTIMIZE_HEAD | HTML5DOMDocument::FIX_DUPLICATE_STYLES);
+        $componentFragmentsElements = $domDocument->querySelectorAll('component-fragment');
+        if ($componentFragmentsElements->length > 0) {
+            foreach ($componentFragmentsElements as $componentFragmentsElement) {
+                $srcAttributeValue = $componentFragmentsElement->getAttribute('src');
+                if (strpos($srcAttributeValue, 'internal-ref:') === 0) {
+                    $dataReferenceID = substr($srcAttributeValue, 13);
+                    $srcAttributeValue = $fragmentsReferences[(int)$dataReferenceID];
+                }
+                if (strpos($srcAttributeValue, 'data:base64,') === 0) {
+                    $componentFragmentContent = base64_decode(substr($srcAttributeValue, 12));
+                    $componentFragmentsElement->outerHTML = $componentFragmentContent;
+                } else {
+                    throw new \Exception('Component fragment src attribute must be a base64 data URI (data:base64,ABCD...) or ref');
+                }
+            }
+        }
+
+        $domDocument->modify(HTML5DOMDocument::FIX_MULTIPLE_TITLES | HTML5DOMDocument::FIX_DUPLICATE_METATAGS | HTML5DOMDocument::FIX_MULTIPLE_HEADS | HTML5DOMDocument::FIX_MULTIPLE_BODIES | HTML5DOMDocument::OPTIMIZE_HEAD | HTML5DOMDocument::FIX_DUPLICATE_STYLES | HTML5DOMDocument::FIX_DUPLICATE_LINKS);
         return $domDocument->saveHTML();
     }
 
