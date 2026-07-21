@@ -205,7 +205,10 @@ class HTMLServerComponentsCompiler
                 if ($componentFragmentsElements->length > 0) {
                     $existingComponentFragments = [];
                     foreach ($componentFragmentsElements as $componentFragmentsElement) {
-                        $componentFragmentID = $componentFragmentsElement->id;
+                        $componentFragmentID = (string)$componentFragmentsElement->getAttribute('id');
+                        if ($componentFragmentID === '') {
+                            throw new \Exception('Component fragment must have an id attribute!');
+                        }
                         if (isset($existingComponentFragments[$componentFragmentID])) {
                             $componentFragmentsElement->parentNode->removeChild($componentFragmentsElement);
                         } else {
